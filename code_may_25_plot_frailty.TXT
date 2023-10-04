@@ -1,0 +1,1080 @@
+
+
+zall<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+zall$cure1
+zall$cure1[is.na(zall$cure1)]<-0
+timecure1<-zall$cure1
+
+zall$ill1 
+zall$ill1[is.na(zall$ill1)]<-0
+timeill1<-zall$ill1
+
+
+zall$cure2
+zall$cure2[is.na(zall$cure2)]<-0
+timecure2<-zall$cure2
+
+zall$ill2
+zall$ill2[is.na(zall$ill2)]<-0
+timeill2<-zall$ill2
+
+zall$cure3
+zall$cure3[is.na(zall$cure3)]<-0
+timecure3<-zall$cure3
+
+zall$ill3
+zall$ill3[is.na(zall$ill3)]<-0
+timeill3<-zall$ill3
+
+zall$cure4
+zall$cure4[is.na(zall$cure4)]<-0
+timecure4<-zall$cure4
+
+zall$ill4
+zall$ill4[is.na(zall$ill4)]<-0
+timeill4<-zall$ill4
+
+zall$cure5
+zall$cure5[is.na(zall$cure5)]<-0
+timecure5<-zall$cure5
+
+zall$ill5
+zall$ill5[is.na(zall$ill5)]<-0
+timeill5<-zall$ill5
+
+
+
+
+timecure<-cbind(zall$cure1,zall$cure2,zall$cure3,zall$cure4,zall$cure5)
+timecure
+timeill<-cbind(zall$ill1,zall$ill2,zall$ill3,zall$ill4,zall$ill5)
+timeill
+
+
+
+
+###################################################################
+
+z<-read.table("newrxfev.txt",header=TRUE,sep='\t')	
+names(z)
+attach(z)
+z
+
+z$cure1
+z$cure1[is.na(z$ill1)]<-0
+cure1<-z$cure1
+
+z$ill1 
+z$ill1[is.na(z$ill1)]<-0
+ill1<-z$ill1
+
+
+z$cure2
+z$cure2[is.na(z$cure2)]<-0
+cure2<-z$cure2
+
+z$ill2
+z$ill2[is.na(z$ill2)]<-0
+ill2<-z$ill2
+
+z$cure3
+z$cure3[is.na(z$cure3)]<-0
+cure3<-z$cure3
+
+z$ill3
+z$ill3[is.na(z$ill3)]<-0
+ill3<-z$ill3
+
+z$cure4
+z$cure4[is.na(z$cure4)]<-0
+cure4<-z$cure4
+
+z$ill4
+z$ill4[is.na(z$ill4)]<-0
+ill4<-z$ill4
+
+z$cure5
+z$cure5[is.na(z$cure5)]<-0
+cure5<-z$cure5
+
+z$ill5
+z$ill5[is.na(z$ill5)]<-0
+ill5<-z$ill5
+
+cure<-cbind(z$cure1,z$cure2,z$cure3,z$cure4,z$cure5)
+cure
+ill<-cbind(z$ill1,z$ill2,z$ill3,z$ill4,z$ill5)
+ill
+
+###################
+
+
+
+###################
+
+
+
+######################
+
+z2<-read.table("rxmat.txt",header=TRUE,sep='\t')	
+names(z2)
+attach(z2)
+z2
+rxmat<-z2
+rxmat
+
+
+z3<-read.table("fevmat.txt",header=TRUE,sep='\t')	
+names(z3)
+attach(z3)
+z3
+fevmat<-z3
+fevmat
+
+##############################################################
+
+##############################################################
+
+
+
+
+z<-read.table("alldeltas_rhdnasePLUSplacebo.txt",header=TRUE,sep='\t')	
+names(z)
+attach(z)
+z
+
+
+z$cure1 #as no NA. hence can't be ommited.
+z$ill1 
+z$ill1[is.na(z$ill1)]<-0
+z$ill1
+
+
+
+z$cure2
+z$cure2[is.na(z$cure2)]<-0
+z$cure2
+z$ill2
+z$ill2[is.na(z$ill2)]<-0
+z$ill2
+
+z$cure3
+z$cure3[is.na(z$cure3)]<-0
+z$cure3
+z$ill3
+z$ill3[is.na(z$ill3)]<-0
+z$ill3
+
+z$cure4
+z$cure4[is.na(z$cure4)]<-0
+z$cure4
+z$ill4
+z$ill4[is.na(z$ill4)]<-0
+z$ill4
+
+z$cure5
+z$cure5[is.na(z$cure5)]<-0
+z$cure5
+z$ill5
+z$ill5[is.na(z$ill5)]<-0
+z$ill5
+
+delta_cure<-cbind(z$cure1,z$cure2,z$cure3,z$cure4,z$cure5)
+delta_cure
+delta_ill<-cbind(z$ill1,z$ill2,z$ill3,z$ill4,z$ill5)
+delta_ill
+
+###################
+
+z<-read.table("alldeltastars_rhdnasePLUSplacebo.txt",header=TRUE,sep='\t')	
+names(z)
+attach(z)
+z
+
+cure1 #as no NA. hence can't be ommited.
+ill1 
+z$ill1 
+z$ill1[is.na(z$ill1)]<-0
+z$ill1
+
+
+
+z$cure2
+z$cure2[is.na(z$cure2)]<-0
+z$cure2
+z$ill2
+z$ill2[is.na(z$ill2)]<-0
+z$ill2
+
+z$cure3
+z$cure3[is.na(z$cure3)]<-0
+z$cure3
+z$ill3
+z$ill3[is.na(z$ill3)]<-0
+z$ill3
+
+z$cure4
+z$cure4[is.na(z$cure4)]<-0
+z$cure4
+z$ill4
+z$ill4[is.na(z$ill4)]<-0
+z$ill4
+
+z$cure5
+z$cure5[is.na(z$cure5)]<-0
+z$cure5
+z$ill5
+z$ill5[is.na(z$ill5)]<-0
+z$ill5
+
+deltastar_cure<-cbind(z$cure1,z$cure2,z$cure3,z$cure4,z$cure5)
+deltastar_cure
+deltastar_ill<-cbind(z$ill1,z$ill2,z$ill3,z$ill4,z$ill5)
+deltastar_ill
+
+
+
+
+
+
+##############################################################
+
+##############################################################
+
+
+beta_1=1.9
+alpha_1=(gamma(1+(1/beta_1)))^beta_1 # to make the expectation 1
+alpha_1
+0.7968798
+
+a_1<-beta_1
+a_1
+
+b_1<-(1/((alpha_1)^(1/beta_1)))
+b_1
+
+set.seed(24)
+u <- rweibull(647,shape=a_1,scale=b_1)
+
+
+risk1<-array(0,dim=c(647,647,3))
+
+amatcomp<-array(0,dim=c(647,647,3))
+
+
+for(i in 1:647)
+{
+for(k in 1:647)
+{
+if(timecure[k,1]>=timecure[i,1] && timecure[i,1]!=0)
+{
+risk1[i,k,1] <- fevmat[k,1]         
+risk1[i,k,2] <- rxmat[k,1]                  
+risk1[i,k,3] <- u[k]
+
+
+}
+
+else
+{
+risk1[i,k,1] <- 0
+risk1[i,k,2] <- 0
+risk1[i,k,3] <- 0
+
+
+}
+}
+}
+
+
+time1<-Sys.time()
+
+
+# the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+stage=1
+kappa=0.7239
+
+hazcomp<-matrix(0,647,647)
+sumhazcomp<-rep(0,647)
+
+for(i in 1:647)
+{
+for(j in 1:647)
+{
+
+hazcomp[i,j]<- (exp(0.02*risk1[i,j,1] - 0.37*risk1[i,j,2] + log(risk1[i,j,3]) + (stage - 1)*log(kappa)))
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(unique(timecure[,1])) -1
+
+basehaz<-rep(0,138)
+
+delta<-rbinom(138,1,0.9)
+deltastar<-rep(1,138)
+
+for(i in 1:138)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[timecure[,1]==sort(unique(timecure[,1]))[-1][i]]) )
+}
+basehaz
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 647's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+#rx=1
+
+haz1 <- basehaz* (exp(0.2*mean(fevmat[,1]) - 0.37*1  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz1
+#
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.2*mean(fevmat[,1]) - 0.37*0  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz0
+#plot(sort(unique(timecure[,1]))[-1] , haz1,type="l",ylim=c(min(haz0,haz1),max(haz0,haz1)),ylab="Hazard",xlab="Time to fall ill",main="Cycle 1")
+
+layout(matrix(c(1,1), 2, 1, byrow = TRUE))
+
+layout(matrix(c(1,1,1), 3, 1, byrow = TRUE))
+
+par(fig=c(0,.45,0.77,1), new=TRUE)
+par(mar=c(0,4,2,0))
+
+plot(sort(unique(timecure[,1]))[-1] , basehaz,type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to relapse",main="Cycle 1",lty=1)
+lines(sort(unique(timecure[,1]))[-1] , haz1,lty=2)
+lines(sort(unique(timecure[,1]))[-1] , haz0,lty=3)
+
+
+##################################################################
+##################################################################
+
+
+# cure stage 2
+
+
+
+##################################################################
+##################################################################
+
+
+
+
+
+zall<-read.table("cure2_all.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+set.seed(24)
+u <- rweibull(647,shape=a_1,scale=b_1)
+u <- u[zall$id]
+
+##############################################################
+
+##############################################################
+
+
+risk2<-array(0,dim=c(226,226,3))
+
+
+
+for(i in 1:226)
+{
+for(k in 1:226)
+{
+if(zall$timecure2[k]>=zall$timecure2[i] && zall$timecure2[i]!=0)
+{
+risk2[i,k,1] <- zall$fevmat2[k]         
+risk2[i,k,2] <- zall$rxmat2[k]                  
+risk2[i,k,3] <- u[k]
+}
+
+else
+{
+risk2[i,k,1] <- 0
+risk2[i,k,2] <- 0
+risk2[i,k,3] <- 0
+}
+
+
+}
+}
+
+#the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+stage=2
+
+hazcomp<-matrix(0,226,226)
+sumhazcomp<-rep(0,226)
+
+for(i in 1:226)
+{
+for(j in 1:226)
+{
+
+hazcomp[i,j]<- (exp(0.16*risk2[i,j,1] - 0.19*risk2[i,j,2]  + log(risk2[i,j,3]) + (stage - 1)*log(kappa)))
+
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(sort(unique(zall$timecure2))) # since sort(unique(zall$timecure2)) it doesnot contain the value 0, hence, no -1
+114
+
+
+basehaz<-rep(0,114)
+
+delta<-rbinom(114,1,0.7)
+deltastar<-rep(1,114)
+
+for(i in 1:114)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[zall$timecure2==sort(unique(zall$timecure2))[i]]) )
+}
+basehaz
+
+
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 226's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+
+#rx=1
+
+haz1 <- basehaz* (exp(0.16*mean(zall$fevmat2) - 0.19*1  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz1
+#par(mfrow=c(2,1))
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.16*mean(zall$fevmat2) - 0.19*0  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz0
+#plot(sort(unique(zall$timecure2)) , haz1,type="l",ylim=c(min(haz0,haz1),max(haz0,haz1)),ylab="Hazard",xlab="Time to fall ill",main="Cycle 2")
+
+par(fig=c(0,.45,0.49,.72), new=TRUE)
+par(mar=c(0,4,2,0))
+
+
+
+
+plot(sort(unique(zall$timecure2)) , basehaz,type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to relapse",main="Cycle 2",lty=1)
+lines(sort(unique(zall$timecure2)) , haz1,lty=2)
+lines(sort(unique(zall$timecure2)) , haz0,lty=3)
+
+
+################################################################################################################################################################
+#####################################################################################################################################################################################
+
+
+
+
+
+## cure stage 3
+
+######################################################################################################################################################################################################
+##################################################################################################################################################################################
+
+
+
+
+zall<-read.table("cure3_all.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+set.seed(24)
+u <- rweibull(647,shape=a_1,scale=b_1)
+u <- u[zall$id]
+
+
+##############################################################
+
+##############################################################
+
+
+risk3<-array(0,dim=c(69,69,3))
+
+amatcomp<-array(0,dim=c(69,69,3))
+
+for(i in 1:69)
+{
+for(k in 1:69)
+{
+if(zall$timecure3[k]>=zall$timecure3[i] && zall$timecure3[i]!=0)
+{
+risk3[i,k,1] <- zall$fevmat3[k]         
+risk3[i,k,2] <- zall$rxmat3[k]                  
+risk3[i,k,3] <- u[k]
+}
+
+else
+{
+risk3[i,k,1] <- 0
+risk3[i,k,2] <- 0
+risk3[i,k,3] <- 0
+}
+
+
+
+}
+}
+
+time1<-Sys.time()
+time1
+
+
+#the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+stage=3
+
+hazcomp<-matrix(0,69,69)
+sumhazcomp<-rep(0,69)
+
+for(i in 1:69)
+{
+for(j in 1:69)
+{
+
+hazcomp[i,j]<- (exp(0.11*risk3[i,j,1] + 0.18*risk3[i,j,2]  + log(risk3[i,j,3]) + (stage - 1)*log(kappa)))
+
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(sort(unique(zall$timecure3))) # since sort(unique(timecure3)) it doesnot contain the value 0, hence, no -1
+42
+
+
+basehaz<-rep(0,42)
+
+delta<-rbinom(42,1,0.5)
+deltastar<-rep(1,42)
+
+for(i in 1:42)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[zall$timecure3==sort(unique(zall$timecure3))[i]]) )
+}
+basehaz
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 69's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+#plot(sort(unique(timecure[,1]))[-1] , basehaz,type="l")
+
+#rx=1
+
+haz1 <- basehaz* (exp(0.11*mean(zall$fevmat3) + 0.18*1  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz1
+#par(mfrow=c(2,1))
+
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.11*mean(zall$fevmat3) + 0.18*0  + log(mean(u)) + (stage - 1)*log(kappa) ))
+haz0
+
+par(fig=c(0,.45,0.21,.44), new=TRUE)
+par(mar=c(0,4,2,0))
+
+
+plot(sort(unique(zall$timecure3)) , basehaz,type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to relapse",main="Cycle 3",lty=1)
+lines(sort(unique(zall$timecure3)) , haz1,lty=2)
+lines(sort(unique(zall$timecure3)) , haz0,lty=3)
+
+mtext("Time to relapse",side=1,line=3,font=1)
+
+#########################################################################################
+
+##########################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######################################################################################################################
+
+#################################################################################################
+
+# curve for illness
+
+beta_2=0.87
+alpha_2=(gamma(1+(1/beta_2)))^beta_2 # to make the expectation 1
+alpha_2
+1.06294
+
+a_2<-beta_2
+a_2
+
+b_2<-(1/((alpha_2)^(1/beta_2)))
+b_2
+
+set.seed(24)
+v <- rweibull(647,shape=a_2,scale=b_2)
+
+
+ill stage 1
+
+#####################################################################################################
+
+#############################################################################################
+
+
+zall<-read.table("ill1_all.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+
+v <- v[zall$id]
+
+##############################################################
+
+##############################################################
+
+
+risk1<-array(0,dim=c(247,247,3))
+
+amatcomp<-array(0,dim=c(247,247,3))
+
+
+for(i in 1:247)
+{
+for(k in 1:247)
+{
+if(zall$timeill1[k]>=zall$timeill1[i] && zall$timeill1[i]!=0)
+{
+risk1[i,k,1] <- zall$fevmat1[k]         
+risk1[i,k,2] <- zall$rxmat1[k]                  
+risk1[i,k,3] <- v[k]
+
+}
+
+else
+{
+risk1[i,k,1] <- 0
+risk1[i,k,2] <- 0
+risk1[i,k,3] <- 0
+
+}
+
+
+}
+}
+
+
+time1<-Sys.time()
+
+#the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+stage = 1
+rho = 0.47
+
+hazcomp<-matrix(0,247,247)
+sumhazcomp<-rep(0,247)
+
+for(i in 1:247)
+{
+for(j in 1:247)
+{
+
+hazcomp[i,j]<- exp(0.37*risk1[i,j,1] + 0.61*risk1[i,j,2]  + log(risk1[i,j,3]) + (stage - 1)*log(rho))
+
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(sort(unique(zall$timeill1))) # since sort(unique(timeill1)) it doesnot contain the value 0, hence, no -1
+40
+
+
+basehaz<-rep(0,40)
+
+delta<-rbinom(40,1,0.9)
+deltastar<-rep(1,40)
+
+for(i in 1:40)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[zall$timeill1==sort(unique(zall$timeill1))[i]]) )
+}
+basehaz
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 247's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+#plot(sort(unique(timecure[,1]))[-1] , basehaz,type="l")
+
+#rx=1
+
+haz1 <- basehaz* (exp(0.37*mean(zall$fevmat1) + 0.61*1  + log(mean(v)) + (stage - 1)*log(rho) ))
+haz1
+#par(mfrow=c(2,1))
+
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.37*mean(zall$fevmat1) + 0.61*0  + log(mean(v)) + (stage - 1)*log(rho) ))
+haz0
+
+
+
+par(fig=c(0.5,.95,0.77,1), new=TRUE)
+par(mar=c(0,4,2,0))
+
+plot(sort(unique(zall$timeill1)) , basehaz,type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to cure",main="Cycle 1",lty=1)
+lines(sort(unique(zall$timeill1)) , haz1,lty=2)
+lines(sort(unique(zall$timeill1)) , haz0,lty=3)
+
+
+
+###############################################################################################
+
+##########################################################################################
+
+
+ill stage 2
+
+#####################################################################################
+
+#####################################################################################
+
+
+zall<-read.table("ill2_all.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+set.seed(24)
+v <- rweibull(647,shape=a_2,scale=b_2)
+v <- v[zall$id]
+
+##############################################################
+
+##############################################################
+
+
+risk2<-array(0,dim=c(81,81,3))
+
+amatcomp<-array(0,dim=c(81,81,3))
+
+
+for(i in 1:81)
+{
+for(k in 1:81)
+{
+if(zall$timeill2[k]>=zall$timeill2[i] && zall$timeill2[i]!=0)
+{
+risk2[i,k,1] <- zall$fevmat2[k]         
+risk2[i,k,2] <- zall$rxmat2[k]                  
+risk2[i,k,3] <- v[k]
+}
+
+else
+{
+risk2[i,k,1] <- 0
+risk2[i,k,2] <- 0
+risk2[i,k,3] <- 0
+}
+
+
+}
+}
+
+
+time1<-Sys.time()
+time1
+
+
+#the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+stage=2
+
+hazcomp<-matrix(0,81,81)
+sumhazcomp<-rep(0,81)
+
+for(i in 1:81)
+{
+for(j in 1:81)
+{
+
+hazcomp[i,j]<- (exp(0.29*risk2[i,j,1] + 0.24*risk2[i,j,2]  + log(risk2[i,j,3]) + (stage - 1)*log(rho)))
+
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(sort(unique(zall$timeill2))) # since sort(unique(zall$timeill2)) it doesnot contain the value 0, hence, no -1
+34
+
+
+basehaz<-rep(0,34)
+
+delta<-rbinom(34,1,0.9)
+deltastar<-rep(1,34)
+
+for(i in 1:34)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[zall$timeill2==sort(unique(zall$timeill2))[i]]) )
+}
+basehaz
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 81's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+#plot(sort(unique(timecure[,1]))[-1] , basehaz,type="l")
+
+#rx=1
+
+
+haz1 <- basehaz* (exp(0.29*mean(zall$fevmat2) + 0.24*1  + log(mean(v)) + (stage - 1)*log(rho) ))
+haz1
+#par(mfrow=c(2,1))
+
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.29*mean(zall$fevmat2) + 0.24*0  + log(mean(v)) + (stage - 1)*log(rho) ))
+haz0
+
+par(fig=c(0.5,.95,0.49,.72), new=TRUE)
+par(mar=c(0,4,2,0))
+
+plot(sort(unique(zall$timeill2)) , basehaz, type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to cure",main="Cycle 2",lty=1)
+lines(sort(unique(zall$timeill2)) , haz1,lty=2)
+lines(sort(unique(zall$timeill2)) , haz0,lty=3)
+
+
+
+
+###################################################################################################################################################################################
+#
+###################################################################################################################################################################################
+
+
+
+
+# ill stage 3
+
+#############################################################
+#############################################################
+
+#############################################################
+#############################################################
+
+
+zall<-read.table("ill3_all.txt",header=TRUE,sep='\t')	
+names(zall)
+attach(zall)
+zall
+
+# choose the v's corresponding to the individuals where the data
+# corresponding to the individuals exists
+
+set.seed(24)
+v <- rweibull(647,shape=a_2,scale=b_2)
+v <- v[zall$id]
+
+##############################################################
+
+##############################################################
+
+
+risk3<-array(0,dim=c(27,27,3))
+
+
+for(i in 1:27)
+{
+for(k in 1:27)
+{
+if(zall$timeill3[k]>=zall$timeill3[i] && zall$timeill3[i]!=0)
+{
+risk3[i,k,1] <- zall$fevmat3[k]         
+risk3[i,k,2] <- zall$rxmat3[k]                  
+risk3[i,k,3] <- v[k]
+}
+
+else
+{
+risk3[i,k,1] <- 0
+risk3[i,k,2] <- 0
+risk3[i,k,3] <- 0
+}
+
+
+
+}
+}
+
+
+time1<-Sys.time()
+time1
+
+
+#the elements of te risk set for the i^{th} individual is denoted by the matrix risk1[i,,]
+
+# survival function calculation
+
+
+hazcomp<-matrix(0,27,27)
+sumhazcomp<-rep(0,27)
+
+for(i in 1:27)
+{
+for(j in 1:27)
+{
+
+hazcomp[i,j]<- (exp(0.22*risk3[i,j,1] + 0.17*risk3[i,j,2]  + log(risk3[i,j,3]) + (stage - 1)*log(rho)))
+
+}
+
+sumhazcomp[i]<- sum(hazcomp[i,])
+}
+
+sumhazcomp
+
+length(sort(unique(zall$timeill3))) # since sort(unique(zall$timeill3)) it doesnot contain the value 0, hence, no -1
+16
+
+
+basehaz<-rep(0,16)
+
+delta<-rbinom(16,1,0.9)
+deltastar<-rep(1,16)
+
+for(i in 1:16)
+
+{
+basehaz[i]<-(1)/( unique(sumhazcomp[zall$timeill3==sort(unique(zall$timeill3))[i]]) )
+}
+basehaz
+
+# as we can have duplicated x_ji's, hence we are taking the unique ones. and considering 
+# only those sumhazcomp among the 27's, which have the unique x_ji's. it is noted that the 
+# ones with similar x_ji's have similar sumhazcomps. so no problem and hence the final unique
+# command.
+# since the unique values involve 0, and we don't want to involve it , so we are eliminating
+# the first value from the sorted timecure[,1].
+
+# plot of baseline hazard function
+
+#plot(sort(unique(timecure[,1]))[-1] , basehaz,type="l")
+
+#rx=1
+
+haz1 <- basehaz* (exp(0.22*mean(zall$fevmat3) + 0.17*1  + log(mean(v)) + (stage - 1)*log(rho)))
+haz1
+#par(mfrow=c(2,1))
+
+
+
+#rx=0
+
+haz0 <- basehaz* (exp(0.22*mean(zall$fevmat3) + 0.17*0  + log(mean(v)) + (stage - 1)*log(rho)))
+haz0
+
+par(fig=c(0.5,.95,0.21,.44), new=TRUE)
+par(mar=c(0,4,2,0))
+
+
+
+plot(sort(unique(zall$timeill3)) , basehaz,type="l",ylim=c(min(haz0,haz1,basehaz),max(haz0,haz1,basehaz)),ylab="Hazard rate",xlab="Time to cure",main="Cycle 3",lty=1)
+lines(sort(unique(zall$timeill3)) , haz1,lty=2)
+lines(sort(unique(zall$timeill3)) , haz0,lty=3)
+
+
+mtext("Time to cure",side=1,line=3,font=1)
+
+par(fig=c(0,.95,0,.2), new=TRUE)
+
+legend(locator(1),c("Baseline Hazard","rhDNase","placebo"),lty=c(1,2,3),lwd=c(2.5,2.5,2.5),horiz=TRUE,cex=1)
+
+

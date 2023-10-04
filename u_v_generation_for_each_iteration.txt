@@ -1,0 +1,2281 @@
+
+# the parameters for the v's (starting with an arbitrary beta_2)
+
+beta_2=2.2
+alpha_2=(gamma(1+(1/beta_2)))^beta_2
+alpha_2
+
+
+a_2<-beta_2
+a_2
+
+b_2<-(1/((alpha_2)^(1/beta_2)))
+b_2
+
+# changed shape=a 
+# changed scale=b
+
+######################################################################
+
+# the other things that won't change are ""kappa, ""rho and "zi".
+# here, we are fixing up the values.
+
+
+
+########################################################################
+
+# the other things that won't change are ""kappa, ""rho and "zi".
+# here, we are fixing up the values.
+
+kappa= .5
+
+rho= .6
+
+zi= 0.85
+
+
+############################################################################
+
+z_cure1<-read.table("cure1_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_cure1)
+attach(z_cure1)
+z_cure1
+
+
+timecure1 <- z_cure1$timecure1
+rx1 <- z_cure1$rx
+fev1 <- z_cure1$fev
+
+delta_cure1 <- z_cure1$delta
+deltastar_cure1 <- z_cure1$deltastar
+
+###################
+
+
+
+###################################################################################################################################
+#
+#
+#
+####################################################################################################################################
+
+
+##############################
+
+# Now, the matrix and vector initialization. Again this needs to be done for each of the stages.
+
+##################################
+#     stage 1 
+##################################
+
+g1_comp1_num_u<-rep(0,643)
+g1_comp1_num_w<-rep(0,643)
+
+g1_comp1_denom_u <- matrix(0,643,643)
+g1_comp1_denom_w <- matrix(0,643,643)
+
+sum_g1_comp1_denom_u <- rep(0,643)
+sum_g1_comp1_denom_w <- rep(0,643)
+
+
+g1_comp_2_u<-rep(0,643)
+g1_comp_2_w<-rep(0,643)
+
+g1_comp_3_u<-rep(0,643)
+g1_comp_3_w<-rep(0,643)
+
+num_rat_1 <- rep(0,643)
+denom_rat_1 <- rep(0,643)
+
+g1_comp2_rat <- rep(0,643)
+
+g1_comp3_rat <- rep(0,643)
+
+g1_rat <- rep(0,643)
+
+
+##################################
+#     stage 2 
+##################################
+
+
+g2_comp1_num_u<-rep(0,226)
+g2_comp1_num_w<-rep(0,226)
+
+g2_comp1_denom_u <- matrix(0,226,226)
+g2_comp1_denom_w <- matrix(0,226,226)
+
+sum_g2_comp1_denom_u <- rep(0,226)
+sum_g2_comp1_denom_w <- rep(0,226)
+
+num_rat_2 <- rep(0,226)
+denom_rat_2 <- rep(0,226)
+
+g2_rat <- rep(0,226)
+
+# The comp 2 and 3 are "j" independent. So, it will not be calculated for stage 2 and 3. 
+# It was calculated only for stage 1.
+
+
+######################################################################
+
+
+##################################
+#     stage 3 
+##################################
+
+
+g3_comp1_num_u<-rep(0,69)
+g3_comp1_num_w<-rep(0,69)
+
+g3_comp1_denom_u <- matrix(0,69,69)
+g3_comp1_denom_w <- matrix(0,69,69)
+
+sum_g3_comp1_denom_u <- rep(0,69)
+sum_g3_comp1_denom_w <- rep(0,69)
+
+num_rat_3 <- rep(0,69)
+denom_rat_3 <- rep(0,69)
+
+g3_rat <- rep(0,69)
+
+# The comp 2 and 3 are "j" independent. So, it will not be calculated for stage 2 and 3. 
+# It was calculated only for stage 1.
+
+
+######################################################################
+
+# and the general one, that contains the product
+
+g_rat <- 0
+
+######################################################################
+
+# for a fixed value of v, we want to obtaion the functional value for variable u.
+# but we are putting it now within the function as well.
+
+
+
+############################################
+#
+#    stage 1
+############################################
+
+# now, there exists 647 individuals. so 647 u's will be generated. out of which 
+# we will not use those u's, for which cure1=0. so we will eliminate those and 
+# will make u1 from u, and w1 rom w. so u1 and w1 will be of length 643 each.
+
+# So read the following data
+
+z_u1_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_u1_calculation)
+attach(z_u1_calculation)
+
+
+z_u1_calculation$cure1[is.na(z_u1_calculation$cure1)]<-0
+
+
+############################################
+#
+#    stage 2
+#
+############################################
+
+
+z_cure2<-read.table("cure2_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_cure2)
+attach(z_cure2)
+z_cure2
+
+timecure2 <- z_cure2$timecure2 
+delta_cure2 <- z_cure2$delta_cure2
+deltastar_cure2 <- z_cure2$deltastar_cure2
+fev2 <- z_cure2$fev2
+rx2 <- z_cure2$rx2
+
+# for the reduced "u" and "w"
+###############################
+
+z_u2_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_u2_calculation)
+attach(z_u2_calculation)
+
+
+z_u2_calculation$cure2[is.na(z_u2_calculation$cure2)]<-0
+
+
+###############################################################################
+
+##########################################
+#
+#   stage 3
+#
+##########################################
+
+z_cure3<-read.table("cure3_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_cure3)
+attach(z_cure3)
+z_cure3
+
+timecure3 <- z_cure3$timecure3
+delta_cure3 <- z_cure3$delta_cure3
+deltastar_cure3 <- z_cure3$deltastar_cure3
+fev3 <- z_cure3$fev3
+rx3 <- z_cure3$rx3
+
+# for the reduced "u" and "w"
+###############################
+
+z_u3_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_u3_calculation)
+attach(z_u3_calculation)
+
+
+z_u3_calculation$cure3[is.na(z_u3_calculation$cure3)]<-0
+
+################################################################################
+
+
+
+# the calculation
+
+
+
+func_cure<-function(u,w,v)
+{
+
+###############################
+#
+# stage 1
+#
+###############################
+
+j=1
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk1<-array(0,dim=c(643,643,4))
+
+
+#######################
+
+# the new u1 and w1 and also v1
+
+u1<-u[z_u1_calculation$cure1!=0]
+
+w1<-w[z_u1_calculation$cure1!=0]
+
+v1<-v[z_u1_calculation$cure1!=0]
+
+
+
+for(i in 1:643)
+{
+g1_comp1_num_u[i] <- ( exp( theta_11*fev1[i] + theta_12*rx1[i] + (j-1)*log(kappa) + log(u1[i])) ) ^( delta_cure1[i] * deltastar_cure1[i])
+
+g1_comp1_num_w[i] <- ( exp( theta_11*fev1[i] + theta_12*rx1[i] + (j-1)*log(kappa) + log(w1[i])) )^( delta_cure1[i] * deltastar_cure1[i])
+
+num_rat_1[i] <- ( g1_comp1_num_w[i] / g1_comp1_num_u[i] )
+
+
+for(l in 1:643)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timecure1[l]>=timecure1[i] && timecure1[i]!=0)
+{
+risk1[i,l,1] <- fev1[l]         
+risk1[i,l,2] <- rx1[l]                  
+risk1[i,l,3] <- u1[l]
+risk1[i,l,4] <- w1[l]
+
+}
+
+else
+{
+risk1[i,l,1] <- 0
+risk1[i,l,2] <- 0
+risk1[i,l,3] <- 0
+risk1[i,l,4] <- 0
+
+}
+
+
+
+
+g1_comp1_denom_u[i,l] =  ( exp(theta_11*risk1[i,l,1] + theta_12*risk1[i,l,2] + (j-1)*log(kappa) + log(risk1[i,l,3]) ) )
+
+g1_comp1_denom_w[i,l] =  ( exp(theta_11*risk1[i,l,1] + theta_12*risk1[i,l,2] + (j-1)*log(kappa) + log(risk1[i,l,4]) ) ) 
+
+
+
+
+}
+sum_g1_comp1_denom_u[i] = ( sum(g1_comp1_denom_u[i,]) ) ^( delta_cure1[i] * deltastar_cure1[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_g1_comp1_denom_w[i] = ( sum(g1_comp1_denom_w[i,]) ) ^( delta_cure1[i] * deltastar_cure1[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_1[i] <- ( sum_g1_comp1_denom_u[i] / sum_g1_comp1_denom_w[i] )
+
+
+
+
+
+
+g1_comp_2_u[i] <-  ( (1- exp(-alpha_1*(u1[i])^beta_1))^(-zi) +  (1- exp(-alpha_2*(v1[i])^beta_2))^(-zi) -1 )^(-(1/zi)-2)          
+
+g1_comp_2_w[i] <-  ( (1- exp(-alpha_1*(w1[i])^beta_1))^(-zi) +  (1- exp(-alpha_2*(v1[i])^beta_2))^(-zi) -1 )^(-(1/zi)-2)          
+
+
+
+g1_comp2_rat[i] <- ( g1_comp_2_w[i] / g1_comp_2_u[i] )
+
+g1_comp_3_u[i] <- ( (1- exp(-alpha_1*(u1[i])^beta_1))^(-zi-1) )
+
+g1_comp_3_w[i] <- ( (1- exp(-alpha_1*(w1[i])^beta_1))^(-zi-1) )
+
+
+g1_comp3_rat[i] <- ( g1_comp_3_w[i] / g1_comp_3_u[i] )
+
+
+g1_rat[i] <- num_rat_1[i] * denom_rat_1[i] * g1_comp2_rat[i] * g1_comp3_rat[i]
+
+}
+
+
+
+############################################
+#
+#    stage 2
+#
+############################################
+
+
+
+j=2
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk2<-array(0,dim=c(226,226,4))
+
+
+#######################
+# only u will be required for the seecond and 3rd stage, the part involving v, is 
+# independent of j, so had been calculated once along with the calculation of the 
+# 1st stage.
+#######################
+
+# now, since, we are taking those u's out of the 647, for which, the timecure2 is
+# not equal to 0.
+
+# the new u2 and w2
+
+u2<-u[z_u2_calculation$cure2!=0]
+
+w2<-w[z_u2_calculation$cure2!=0]
+
+for(i in 1:226)
+{
+g2_comp1_num_u[i] <- ( exp( theta_21*fev2[i] + theta_22*rx2[i] + (j-1)*log(kappa) + log(u2[i])) ) ^( delta_cure2[i] * deltastar_cure2[i])
+
+g2_comp1_num_w[i] <- ( exp( theta_21*fev2[i] + theta_22*rx2[i] + (j-1)*log(kappa) + log(w2[i])) )^( delta_cure2[i] * deltastar_cure2[i])
+
+num_rat_2[i] <- ( g2_comp1_num_w[i] / g2_comp1_num_u[i] )
+
+
+for(l in 1:226)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timecure2[l]>=timecure2[i] && timecure2[i]!=0)
+{
+risk2[i,l,1] <- fev2[l]         
+risk2[i,l,2] <- rx2[l]                  
+risk2[i,l,3] <- u2[l]
+risk2[i,l,4] <- w2[l]
+
+}
+
+else
+{
+risk2[i,l,1] <- 0
+risk2[i,l,2] <- 0
+risk2[i,l,3] <- 0
+risk2[i,l,4] <- 0
+
+}
+
+
+
+
+g2_comp1_denom_u[i,l] =  ( exp(theta_21*risk2[i,l,1] + theta_22*risk2[i,l,2] + (j-1)*log(kappa) + log(risk2[i,l,3]) ) )
+
+g2_comp1_denom_w[i,l] =  ( exp(theta_21*risk2[i,l,1] + theta_22*risk2[i,l,2] + (j-1)*log(kappa) + log(risk2[i,l,4]) ) ) 
+
+
+
+
+}
+sum_g2_comp1_denom_u[i] = ( sum(g2_comp1_denom_u[i,]) ) ^( delta_cure2[i] * deltastar_cure2[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_g2_comp1_denom_w[i] = ( sum(g2_comp1_denom_w[i,]) ) ^( delta_cure2[i] * deltastar_cure2[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_2[i] <- ( sum_g2_comp1_denom_u[i] / sum_g2_comp1_denom_w[i] )
+
+
+g2_rat[i] <- num_rat_2[i] * denom_rat_2[i] 
+
+} # end of the ith loop
+
+
+
+############################################
+#
+#    stage 3
+#
+############################################
+
+
+
+
+j=3
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk3<-array(0,dim=c(69,69,4))
+
+
+#######################
+# only u will be required for the seecond and 3rd stage, the part involving v, is 
+# independent of j, so had been calculated once along with the calculation of the 
+# 1st stage.
+#######################
+
+# now, since, we are taking those u's out of the 647, for which, the timecure2 is
+# not equal to 0.
+
+# the new u3 and w3
+
+u3<-u[z_u3_calculation$cure3!=0]
+
+w3<-w[z_u3_calculation$cure3!=0]
+
+for(i in 1:69)
+{
+g3_comp1_num_u[i] <- ( exp( theta_31*fev3[i] + theta_32*rx3[i] + (j-1)*log(kappa) + log(u3[i])) ) ^( delta_cure3[i] * deltastar_cure3[i])
+
+g3_comp1_num_w[i] <- ( exp( theta_31*fev3[i] + theta_32*rx3[i] + (j-1)*log(kappa) + log(w3[i])) )^( delta_cure3[i] * deltastar_cure3[i])
+
+num_rat_3[i] <- ( g3_comp1_num_w[i] / g3_comp1_num_u[i] )
+
+
+for(l in 1:69)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timecure3[l]>=timecure3[i] && timecure3[i]!=0)
+{
+risk3[i,l,1] <- fev3[l]         
+risk3[i,l,2] <- rx3[l]                  
+risk3[i,l,3] <- u3[l]
+risk3[i,l,4] <- w3[l]
+
+}
+
+else
+{
+risk3[i,l,1] <- 0
+risk3[i,l,2] <- 0
+risk3[i,l,3] <- 0
+risk3[i,l,4] <- 0
+
+}
+
+
+
+
+g3_comp1_denom_u[i,l] =  ( exp(theta_31*risk3[i,l,1] + theta_32*risk3[i,l,2] + (j-1)*log(kappa) + log(risk3[i,l,3]) ) )
+
+g3_comp1_denom_w[i,l] =  ( exp(theta_31*risk3[i,l,1] + theta_32*risk3[i,l,2] + (j-1)*log(kappa) + log(risk3[i,l,4]) ) ) 
+
+
+
+
+}
+sum_g3_comp1_denom_u[i] = ( sum(g3_comp1_denom_u[i,]) ) ^( delta_cure3[i] * deltastar_cure3[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_g3_comp1_denom_w[i] = ( sum(g3_comp1_denom_w[i,]) ) ^( delta_cure3[i] * deltastar_cure3[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_3[i] <- ( sum_g3_comp1_denom_u[i] / sum_g3_comp1_denom_w[i] )
+
+
+g3_rat[i] <- num_rat_3[i] * denom_rat_3[i] 
+
+} # end of the ith loop
+
+
+
+
+
+prod(g1_rat)*prod(g2_rat)*prod(g3_rat)
+
+
+#return(prod(g1_rat))
+}
+
+
+
+
+# 
+##############################################################################
+
+####
+#
+####
+#
+####
+
+
+#############################
+#
+#  #
+# 
+#  #  #    #
+#  #  ###  ###
+#  
+#############################
+
+
+
+
+
+
+
+z_ill1<-read.table("ill1_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_ill1)
+attach(z_ill1)
+z_ill1
+
+
+timeill1 <- z_ill1$timeill1
+rx_ill1 <- z_ill1$rx1_ill
+fev_ill1 <- z_ill1$fev1_ill
+
+delta_ill1 <- z_ill1$delta_ill1
+deltastar_ill1 <- z_ill1$deltastar_ill1
+
+###################
+
+
+
+
+
+###################################################################################################################################
+#
+#
+
+
+###################################################################################################################################
+#
+#
+#
+####################################################################################################################################
+# all the values had been calculated before the cure calculation.
+##############################
+
+# Now, the matrix and vector initialization. Again this needs to be done for each of the stages.
+
+##################################
+#     stage 1 
+##################################
+
+
+
+
+h1_comp1_num_v<-rep(0,247)
+h1_comp1_num_s<-rep(0,247)
+
+h1_comp1_denom_v <- matrix(0,247,247)
+h1_comp1_denom_s <- matrix(0,247,247)
+
+sum_h1_comp1_denom_v <- rep(0,247)
+sum_h1_comp1_denom_s <- rep(0,247)
+
+
+h1_comp_2_v<-rep(0,247)
+h1_comp_2_s<-rep(0,247)
+
+h1_comp_3_v<-rep(0,247)
+h1_comp_3_s<-rep(0,247)
+
+num_rat_ill1 <- rep(0,247)
+denom_rat_ill1 <- rep(0,247)
+
+h1_comp2_rat <- rep(0,247)
+
+h1_comp3_rat <- rep(0,247)
+
+h1_rat <- rep(0,247)
+
+
+##################################
+#     stage 2 
+##################################
+
+
+h2_comp1_num_v <-rep(0,81)
+h2_comp1_num_s <-rep(0,81)
+
+h2_comp1_denom_v <- matrix(0,81,81)
+h2_comp1_denom_s <- matrix(0,81,81)
+
+sum_h2_comp1_denom_v <- rep(0,81)
+sum_h2_comp1_denom_s <- rep(0,81)
+
+num_rat_ill2 <- rep(0,81)
+denom_rat_ill2 <- rep(0,81)
+
+h2_rat <- rep(0,81)
+
+# The comp 2 and 3 are "j" independent. So, it will not be calculated for stage 2 and 3. 
+# It was calculated only for stage 1.
+
+
+######################################################################
+
+
+##################################
+#     stage 3 
+##################################
+
+
+h3_comp1_num_v <-rep(0,27)
+h3_comp1_num_s <-rep(0,27)
+
+h3_comp1_denom_v <- matrix(0,27,27)
+h3_comp1_denom_s <- matrix(0,27,27)
+
+sum_h3_comp1_denom_v <- rep(0,27)
+sum_h3_comp1_denom_s <- rep(0,27)
+
+num_rat_ill3 <- rep(0,27)
+denom_rat_ill3 <- rep(0,27)
+
+h3_rat <- rep(0,27)
+
+# The comp 2 and 3 are "j" independent. So, it will not be calculated for stage 2 and 3. 
+# It was calculated only for stage 1.
+
+
+######################################################################
+
+# and the general one, that contains the product
+
+h_rat <- 0
+
+######################################################################
+
+# for a fixed value of u, we want to obtaion the functional value for variable u.
+# but, here we are putting this inside the function
+
+
+
+############################################
+#
+#    stage 1
+############################################
+
+# now, there exists 647 individuals. so 647 u's will be generated. out of which 
+# we will not use those u's, for which cure1=0. so we will eliminate those and 
+# will make u1 from u, and w1 rom w. so u1 and w1 will be of length 643 each.
+
+# So read the following data
+
+z_v1_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_v1_calculation)
+attach(z_v1_calculation)
+
+
+z_v1_calculation$ill1[is.na(z_v1_calculation$ill1)]<-0
+
+
+############################################
+#
+#    stage 2
+#
+############################################
+
+
+z_ill2<-read.table("ill2_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_ill2)
+attach(z_ill2)
+z_ill2
+
+timeill2 <- z_ill2$timeill2 
+delta_ill2 <- z_ill2$delta_ill2
+deltastar_ill2 <- z_ill2$deltastar_ill2
+
+fev_ill2 <- z_ill2$fev2_ill
+rx_ill2 <- z_ill2$rx2_ill
+
+# for the reduced "u" and "w"
+###############################
+
+z_v2_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_v2_calculation)
+attach(z_v2_calculation)
+
+
+z_v2_calculation$ill2[is.na(z_v2_calculation$ill2)]<-0
+
+
+###############################################################################
+
+##########################################
+#
+#   stage 3
+#
+##########################################
+
+z_ill3<-read.table("ill3_frailtycalculation.txt",header=TRUE,sep='\t')	
+names(z_ill3)
+attach(z_ill3)
+z_ill3
+
+timeill3 <- z_ill3$timeill3
+delta_ill3 <- z_ill3$delta_ill3
+deltastar_ill3 <- z_ill3$deltastar_ill3
+fev_ill3 <- z_ill3$fev3_ill
+rx_ill3 <- z_ill3$rx3_ill
+
+# for the reduced "u" and "w"
+###############################
+
+z_v3_calculation<-read.table("all_timelengths.txt",header=TRUE,sep='\t')	
+names(z_v3_calculation)
+attach(z_v3_calculation)
+
+
+z_v3_calculation$ill3[is.na(z_v3_calculation$ill3)]<-0
+
+################################################################################
+
+# the calculation
+
+
+
+func_ill<-function(v,s,u)
+{
+
+###############################
+#
+# stage 1
+#
+###############################
+
+j=1
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk_ill1<-array(0,dim=c(247,247,4))
+
+
+#######################
+
+# the new v1 and s1 and also u1
+
+v1<-v[z_v1_calculation$ill1!=0]
+
+s1<-s[z_v1_calculation$ill1!=0]
+
+u1<-u[z_v1_calculation$ill1!=0]
+
+
+for(i in 1:247)
+{
+h1_comp1_num_v[i] <- ( exp( eta_11*fev_ill1[i] + eta_12*rx_ill1[i] + (j-1)*log(rho) + log(v1[i])) ) ^( delta_ill1[i] * deltastar_ill1[i])
+
+h1_comp1_num_s[i] <- ( exp( eta_11*fev_ill1[i] + eta_12*rx_ill1[i] + (j-1)*log(rho) + log(s1[i])) )^( delta_ill1[i] * deltastar_ill1[i])
+
+num_rat_ill1[i] <- ( h1_comp1_num_v[i] / h1_comp1_num_s[i] )
+
+
+for(l in 1:247)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timeill1[l]>=timeill1[i] && timeill1[i]!=0)
+{
+risk_ill1[i,l,1] <- fev_ill1[l]         
+risk_ill1[i,l,2] <- rx_ill1[l]                  
+risk_ill1[i,l,3] <- v1[l]
+risk_ill1[i,l,4] <- s1[l]
+
+}
+
+else
+{
+risk_ill1[i,l,1] <- 0
+risk_ill1[i,l,2] <- 0
+risk_ill1[i,l,3] <- 0
+risk_ill1[i,l,4] <- 0
+
+}
+
+
+
+
+h1_comp1_denom_v[i,l] =  ( exp(eta_11*risk_ill1[i,l,1] + eta_12*risk_ill1[i,l,2] + (j-1)*log(rho) + log(risk_ill1[i,l,3]) ) )
+
+h1_comp1_denom_s[i,l] =  ( exp(eta_11*risk_ill1[i,l,1] + eta_12*risk_ill1[i,l,2] + (j-1)*log(rho) + log(risk_ill1[i,l,4]) ) ) 
+
+
+
+
+}
+sum_h1_comp1_denom_v[i] = ( sum(h1_comp1_denom_v[i,]) ) ^( delta_ill1[i] * deltastar_ill1[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_h1_comp1_denom_s[i] = ( sum(h1_comp1_denom_s[i,]) ) ^( delta_ill1[i] * deltastar_ill1[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_ill1[i] <- ( sum_h1_comp1_denom_v[i] / sum_h1_comp1_denom_s[i] )
+
+
+
+
+
+
+h1_comp_2_v[i] <-  ( (1- exp(-alpha_2*(v1[i])^beta_2))^(-zi) +  (1- exp(-alpha_1*(u1[i])^beta_1))^(-zi) -1 )^(-(1/zi)-2)          
+
+h1_comp_2_s[i] <-  ( (1- exp(-alpha_2*(s1[i])^beta_2))^(-zi) +  (1- exp(-alpha_1*(u1[i])^beta_1))^(-zi) -1 )^(-(1/zi)-2)          
+
+
+
+h1_comp2_rat[i] <- ( h1_comp_2_s[i] / h1_comp_2_v[i] )
+
+h1_comp_3_v[i] <- ( (1- exp(-alpha_2*(v1[i])^beta_2))^(-zi-1) )
+
+h1_comp_3_s[i] <- ( (1- exp(-alpha_2*(s1[i])^beta_2))^(-zi-1) )
+
+
+h1_comp3_rat[i] <- ( h1_comp_3_s[i] / h1_comp_3_v[i] )
+
+
+h1_rat[i] <- num_rat_ill1[i] * denom_rat_ill1[i] * h1_comp2_rat[i] * h1_comp3_rat[i]
+
+}
+
+
+
+############################################
+#
+#    stage 2
+#
+############################################
+
+
+
+j=2
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk_ill2<-array(0,dim=c(81,81,4))
+
+
+#######################
+# only u will be required for the seecond and 3rd stage, the part involving v, is 
+# independent of j, so had been calculated once along with the calculation of the 
+# 1st stage.
+#######################
+
+# now, since, we are taking those u's out of the 647, for which, the timecure2 is
+# not equal to 0.
+
+# the new u2 and w2
+
+v2<-v[z_v2_calculation$ill2!=0]
+
+s2<-s[z_v2_calculation$ill2!=0]
+
+for(i in 1:81)
+{
+h2_comp1_num_v[i] <- ( exp( eta_21*fev_ill2[i] + eta_22*rx_ill2[i] + (j-1)*log(rho) + log(v2[i])) ) ^( delta_ill2[i] * deltastar_ill2[i])
+
+h2_comp1_num_s[i] <- ( exp( eta_21*fev_ill2[i] + eta_22*rx_ill2[i] + (j-1)*log(rho) + log(s2[i])) )^( delta_ill2[i] * deltastar_ill2[i])
+
+num_rat_ill2[i] <- ( h2_comp1_num_s[i] / h2_comp1_num_v[i] )
+
+
+for(l in 1:81)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timeill2[l]>=timeill2[i] && timeill2[i]!=0)
+{
+risk_ill2[i,l,1] <- fev_ill2[l]         
+risk_ill2[i,l,2] <- rx_ill2[l]                  
+risk_ill2[i,l,3] <- v2[l]
+risk_ill2[i,l,4] <- s2[l]
+
+}
+
+else
+{
+risk_ill2[i,l,1] <- 0
+risk_ill2[i,l,2] <- 0
+risk_ill2[i,l,3] <- 0
+risk_ill2[i,l,4] <- 0
+
+}
+
+
+
+
+h2_comp1_denom_v[i,l] =  ( exp(eta_21*risk_ill2[i,l,1] + eta_22*risk_ill2[i,l,2] + (j-1)*log(rho) + log(risk_ill2[i,l,3]) ) )
+
+h2_comp1_denom_s[i,l] =  ( exp(eta_21*risk_ill2[i,l,1] + eta_22*risk_ill2[i,l,2] + (j-1)*log(rho) + log(risk_ill2[i,l,4]) ) ) 
+
+
+
+
+}
+sum_h2_comp1_denom_v[i] = ( sum(h2_comp1_denom_v[i,]) ) ^( delta_ill2[i] * deltastar_ill2[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_h2_comp1_denom_s[i] = ( sum(h2_comp1_denom_s[i,]) ) ^( delta_ill2[i] * deltastar_ill2[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_ill2[i] <- ( sum_h2_comp1_denom_v[i] / sum_h2_comp1_denom_s[i] )
+
+
+h2_rat[i] <- num_rat_ill2[i] * denom_rat_ill2[i] 
+
+} # end of the ith loop
+
+
+
+############################################
+#
+#    stage 3
+#
+############################################
+
+
+
+
+j=3
+
+# for the denominator of g_comp1 , we need to calculate the risk for cure involving u
+
+
+risk_ill3<-array(0,dim=c(27,27,4))
+
+
+#######################
+# only u will be required for the seecond and 3rd stage, the part involving v, is 
+# independent of j, so had been calculated once along with the calculation of the 
+# 1st stage.
+#######################
+
+# now, since, we are taking those u's out of the 647, for which, the timecure2 is
+# not equal to 0.
+
+# the new v3 and s3
+
+v3<-v[z_v3_calculation$ill3!=0]
+
+s3<-s[z_v3_calculation$ill3!=0]
+
+for(i in 1:27)
+{
+h3_comp1_num_v[i] <- ( exp( eta_31*fev_ill3[i] + eta_32*rx_ill3[i] + (j-1)*log(rho) + log(v3[i])) ) ^( delta_ill3[i] * deltastar_ill3[i])
+
+h3_comp1_num_s[i] <- ( exp( eta_31*fev_ill3[i] + eta_32*rx_ill3[i] + (j-1)*log(rho) + log(s3[i])) )^( delta_ill3[i] * deltastar_ill3[i])
+
+num_rat_ill3[i] <- ( h3_comp1_num_s[i] / h3_comp1_num_v[i] )
+
+
+for(l in 1:27)
+{
+
+# The risk calculation
+# here we are replacing the index k's with l's, in the risk set. because both are the same, denoting the individuals who are there in the risk set.
+
+
+
+if(timeill3[l]>=timeill3[i] && timeill3[i]!=0)
+{
+risk_ill3[i,l,1] <- fev_ill3[l]         
+risk_ill3[i,l,2] <- rx_ill3[l]                  
+risk_ill3[i,l,3] <- v3[l]
+risk_ill3[i,l,4] <- s3[l]
+
+}
+
+else
+{
+risk_ill3[i,l,1] <- 0
+risk_ill3[i,l,2] <- 0
+risk_ill3[i,l,3] <- 0
+risk_ill3[i,l,4] <- 0
+
+}
+
+
+
+
+h3_comp1_denom_v[i,l] =  ( exp(eta_31*risk_ill3[i,l,1] + eta_32*risk_ill3[i,l,2] + (j-1)*log(rho) + log(risk_ill3[i,l,3]) ) )
+
+h3_comp1_denom_s[i,l] =  ( exp(eta_31*risk_ill3[i,l,1] + eta_32*risk_ill3[i,l,2] + (j-1)*log(rho) + log(risk_ill3[i,l,4]) ) ) 
+
+
+
+
+}
+sum_h3_comp1_denom_v[i] = ( sum(h3_comp1_denom_v[i,]) ) ^( delta_ill3[i] * deltastar_ill3[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+sum_h3_comp1_denom_s[i] = ( sum(h3_comp1_denom_s[i,]) ) ^( delta_ill3[i] * deltastar_ill3[i])     # sum of risk set with coefficients for the ith individual of the 1st cycle.
+
+denom_rat_ill3[i] <- ( sum_h3_comp1_denom_v[i] / sum_h3_comp1_denom_s[i] )
+
+
+h3_rat[i] <- num_rat_ill3[i] * denom_rat_ill3[i] 
+
+} # end of the ith loop
+
+
+
+
+
+prod(h1_rat)*prod(h2_rat)*prod(h3_rat)
+
+
+#return(prod(h1_rat))
+}
+
+
+# 
+##############################################################################
+
+####
+#
+####
+#
+####
+
+
+
+#################################################################################
+#################################################################################
+
+
+
+
+
+
+n_it <- 20
+
+
+
+u_d <- matrix(0,647,n_it)
+
+v_d <- matrix(0,647,n_it)
+
+mat_u <- matrix(0,647,n_it)
+
+
+mat_v <- matrix(0,647,n_it)
+
+
+
+# fixing the fixed value of u
+
+#set.seed(80)
+u<-rweibull(647,shape=a_1,scale=b_1)
+#set.seed(1)
+v<-rweibull(647,shape=a_2,scale=b_2)
+
+
+
+u_d[,1] <- u
+mat_u[,1] <- u
+
+v_d[,1] <- v
+mat_v[,1] <- v
+
+
+
+t1 <- Sys.time()
+
+t=19
+{
+{
+
+w<-rweibull(647,shape=a_1,scale=b_1)
+
+v <- v_d[,t]
+
+u <- u_d[,t]
+
+
+
+if( runif(1) < func_cure(u,w,v) )
+
+{
+   u_d[,t+1] <- w   # u_d means u desired for the next sample u calculation as well as 
+               # that v_d calculation
+   mat_u[,t+1] <- w
+#   write.csv(mat_u, file = "mat_u_new.csv")
+
+# if the sample is accepted then only use it to calculate the "v" part.
+     
+
+
+                 u <- w     # the quantity which is kept fixed in func_ill
+                 s <- rweibull(647,shape=a_2,scale=b_2)
+
+                 
+
+           if( runif(1) < func_ill(v,s,u) )
+              {
+                   v_d[,t+1] <- s   # v_d means v desired for the next sample u calculation as well as 
+                                    # that v_d calculation
+                   mat_v[,t+1] <- s
+#                   write.csv(mat_v, file = "mat_v_new.csv")
+
+              }
+             else
+               {
+                    v_d[,t+1] <- v_d[,t]
+                    mat_v[,t+1] <- rep(0,647)
+#                    write.csv(mat_v, file = "mat_v_new.csv")
+               
+}
+
+
+
+
+ }  # end of the if bracket of "u"
+
+       else
+        { 
+          u_d[,t+1] <- u_d[,t]
+          mat_u[,t+1] <- rep(0,647)
+#          write.csv(mat_u, file = "mat_u_new.csv")
+
+          v_d[,t+1] <- v_d[,t]
+          mat_v[,t+1] <- rep(0,647)
+#          write.csv(mat_v, file = "mat_v_new.csv")
+  
+        } # else bracket of "u"
+
+}
+}
+
+t2 <- Sys.time()
+
+diff <- t2 -t1
+diff
+
+
+
+
+
+# then, we can eliminate the existence of eff_mat_u. since, here we are taking only those columns of mat_u, for which mat_v's columns are non zero.
+
+samp_u <- mat_u[,colSums(mat_v) !=0] 
+
+
+samp_v <- mat_v[,colSums(mat_v) !=0]
+
+acc_rate_uv <- ncol(samp_u)/ n_it
+
+n_samp <- ncol(samp_u)
+n_samp
+
+avg_u <- rowSums(samp_u)/n_samp
+
+avg_v <- rowSums(samp_v)/n_samp
+
+avg_logu <- rowSums(log(samp_u))/n_samp
+
+avg_logv <- rowSums(log(samp_v))/n_samp
+
+
+
+
+#######################################################################
+#                                                                     #
+#        THE CALCULATION FOR THE DERIVATIVE OF LOGLIKELIHOOD          #
+#                                                                     #
+#######################################################################
+
+
+
+####################################################################
+####################################################################
+
+
+
+# the risk calculation that will be included within the log likelihood
+
+############################
+
+# cure stage 1 
+
+avg_logu1 <- avg_logu[z_u1_calculation$cure1!=0]
+
+
+risk_lnl_c1 <- array(0,dim=c(643,643,2))
+risk_lnl_c1_u <- array(0,dim=c(643,643,n_samp))
+
+for(i in 1:643)
+{
+for(l in 1:643)
+{
+
+if(timecure1[l]>=timecure1[i] && timecure1[i]!=0)
+{
+risk_lnl_c1[i,l,1] <- fev1[l]         
+risk_lnl_c1[i,l,2] <- rx1[l]                  
+risk_lnl_c1_u[i,l,] <- samp_u[l,]
+}
+
+else
+{
+risk_lnl_c1[i,l,1] <- 0
+risk_lnl_c1[i,l,2] <- 0
+risk_lnl_c1_u[i,l,] <- rep(0,n_samp)
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+
+###################################################################
+
+
+
+# cure stage 2 
+
+avg_logu2 <- avg_logu[z_u2_calculation$cure2!=0]
+
+
+risk_lnl_c2<-array(0,dim=c(226,226,2))
+risk_lnl_c2_u <- array(0,dim=c(226,226,n_samp))
+
+
+for(i in 1:226)
+{
+for(l in 1:226)
+{
+
+if(timecure2[l]>=timecure2[i] && timecure2[i]!=0)
+{
+risk_lnl_c2[i,l,1] <- fev2[l]         
+risk_lnl_c2[i,l,2] <- rx2[l]                  
+risk_lnl_c2_u[i,l,] <- samp_u[l,]
+
+
+
+}
+
+else
+{
+risk_lnl_c2[i,l,1] <- 0
+risk_lnl_c2[i,l,2] <- 0
+risk_lnl_c2_u[i,l,] <- rep(0,n_samp)
+
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+
+
+############################
+
+# cure stage 3 
+
+avg_logu3 <- avg_logu[z_u3_calculation$cure3!=0]
+
+
+risk_lnl_c3<-array(0,dim=c(69,69,2))
+risk_lnl_c3_u <- array(0,dim=c(69,69,n_samp))
+
+for(i in 1:69)
+{
+for(l in 1:69)
+{
+
+if(timecure3[l]>=timecure3[i] && timecure3[i]!=0)
+{
+risk_lnl_c3[i,l,1] <- fev3[l]         
+risk_lnl_c3[i,l,2] <- rx3[l]                  
+risk_lnl_c3_u[i,l,] <- samp_u[l,]
+
+
+
+}
+
+else
+{
+risk_lnl_c3[i,l,1] <- 0
+risk_lnl_c3[i,l,2] <- 0
+risk_lnl_c3_u[i,l,] <- rep(0,n_samp)
+
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+##################################################################################
+
+# ill stage 1 
+
+avg_logv1 <- avg_logv[z_v1_calculation$ill1!=0]
+
+
+risk_lnl_i1<-array(0,dim=c(247,247,2))
+risk_lnl_i1_v <- array(0,dim=c(247,247,n_samp))
+
+for(i in 1:247)
+{
+for(l in 1:247)
+{
+
+if(timeill1[l]>=timeill1[i] && timeill1[i]!=0)
+{
+risk_lnl_i1[i,l,1] <- fev_ill1[l]         
+risk_lnl_i1[i,l,2] <- rx_ill1[l]                  
+risk_lnl_i1_v[i,l,] <- samp_v[l,]
+
+
+}
+
+else
+{
+risk_lnl_i1[i,l,1] <- 0
+risk_lnl_i1[i,l,2] <- 0
+risk_lnl_i1_v[i,l,] <- rep(0,n_samp)
+
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+##################################################################################
+
+# ill stage 2 
+
+avg_logv2 <- avg_logv[z_v2_calculation$ill2!=0]
+
+
+risk_lnl_i2<-array(0,dim=c(81,81,2))
+risk_lnl_i2_v <- array(0,dim=c(81,81,n_samp))
+
+for(i in 1:81)
+{
+for(l in 1:81)
+{
+
+if(timeill2[l]>=timeill2[i] && timeill2[i]!=0)
+{
+risk_lnl_i2[i,l,1] <- fev_ill2[l]         
+risk_lnl_i2[i,l,2] <- rx_ill2[l]                  
+risk_lnl_i2_v[i,l,] <- samp_v[l,]
+
+
+}
+
+else
+{
+risk_lnl_i2[i,l,1] <- 0
+risk_lnl_i2[i,l,2] <- 0
+risk_lnl_i2_v[i,l,] <- rep(0,n_samp)
+
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+##################################################################################
+
+# ill stage 3 
+
+avg_logv3 <- avg_logv[z_v3_calculation$ill3!=0]
+
+
+risk_lnl_i3<-array(0,dim=c(27,27,2))
+risk_lnl_i3_v <- array(0,dim=c(27,27,n_samp))
+
+
+for(i in 1:27)
+{
+for(l in 1:27)
+{
+
+if(timeill3[l]>=timeill3[i] && timeill3[i]!=0)
+{
+risk_lnl_i3[i,l,1] <- fev_ill3[l]         
+risk_lnl_i3[i,l,2] <- rx_ill3[l]                  
+risk_lnl_i3_v[i,l,] <- samp_v[l,]
+
+
+
+}
+
+else
+{
+risk_lnl_i3[i,l,1] <- 0
+risk_lnl_i3[i,l,2] <- 0
+risk_lnl_i3_v[i,l,] <- rep(0,n_samp)
+
+}
+
+#r1[i,j] = sum(risk1[,i,j])
+
+}
+}
+##################################################################################
+
+
+
+
+
+
+
+
+
+
+dl_theta_kappa_func<-function(a)
+{
+# start of calculation for derivative w.r.t theta_11 and theta_12
+
+# for theta_11
+
+Ed_c1_comp1 <- rep(0,643)
+Ed_c1_comp2 <- rep(0,643)
+Ed_c1_comp_th_11 <- rep(0,643)
+
+
+Ed_c1_comp21 <- array(0,dim=c(643,643,n_samp))
+Ed_c1_comp22 <- array(0,dim=c(643,643,n_samp))
+Ed_c1_comp23 <- matrix(0,643,n_samp)
+
+# for theta_12
+
+Ed_c1_comp3 <- rep(0,643)
+Ed_c1_comp4 <- rep(0,643)
+Ed_c1_comp_th_12 <- rep(0,643)
+
+
+Ed_c1_comp41 <- array(0,dim=c(643,643,n_samp))
+Ed_c1_comp43 <- matrix(0,643,n_samp)
+
+# for kappa (this will include that part of diff w.r.t. kappa, that would involve j=1)
+
+Ed_comp1 <- rep(0,643)
+Ed_comp2 <- array(0,dim=c(643,643,n_samp))
+
+Ed_comp4 <- matrix(0,643,n_samp)
+Ed_comp5 <- rep(0,643)
+Ed_kappa1 <- rep(0,643)
+
+for(i in 1:643)
+
+{
+
+# 1st stage cure calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=1   # denotes the 1st stage
+
+Ed_c1_comp1[i] <- delta_cure1[i]*deltastar_cure1[i]*(fev1[i]) # for diff w.r.t. theta_11
+Ed_c1_comp3[i] <- delta_cure1[i]*deltastar_cure1[i]*(rx1[i]) # for diff w.r.t. theta_12
+
+Ed_comp1[i] <- delta_cure1[i]*deltastar_cure1[i]*((j-1)/a[7]) #for diff w.r.t. kappa
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:643)
+ {
+  Ed_c1_comp21[i,l,k] =  exp(a[1]*risk_lnl_c1[i,l,1] + a[2]*risk_lnl_c1[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c1_u[i,l,k]) )*risk_lnl_c1[i,l,1]  # for theta_11
+  Ed_c1_comp22[i,l,k] =  exp(a[1]*risk_lnl_c1[i,l,1] + a[2]*risk_lnl_c1[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c1_u[i,l,k]) ) # both for theta_11, theta_12 and kappa first stage part
+
+  Ed_c1_comp41[i,l,k] =  exp(a[1]*risk_lnl_c1[i,l,1] + a[2]*risk_lnl_c1[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c1_u[i,l,k]) )*risk_lnl_c1[i,l,2] # for theta_12
+
+  Ed_comp2[i,l,k] =  exp(a[1]*risk_lnl_c1[i,l,1] + a[2]*risk_lnl_c1[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c1_u[i,l,k]) )*((j-1)/a[7])  # for kappa 1st stage
+ }
+
+Ed_c1_comp23[i,k] = delta_cure1[i]*deltastar_cure1[i]*(sum(Ed_c1_comp21[i,,k])/sum(Ed_c1_comp22[i,,k]))   # for theta_11
+
+Ed_c1_comp43[i,k] = delta_cure1[i]*deltastar_cure1[i]*(sum(Ed_c1_comp41[i,,k])/sum(Ed_c1_comp22[i,,k]))   # for theta_12
+
+Ed_comp4[i,k] = delta_cure1[i]*deltastar_cure1[i]*(sum(Ed_comp2[i,,k])/sum(Ed_c1_comp22[i,,k]))  # for kappa
+
+}
+
+Ed_c1_comp2[i] = (1/n_samp)*sum(Ed_c1_comp23[i,])    # for theta_11
+
+Ed_c1_comp_th_11[i] = Ed_c1_comp1[i] - Ed_c1_comp2[i]    # for theta_11
+
+Ed_c1_comp4[i] = (1/n_samp)*sum(Ed_c1_comp43[i,])    # for theta_12
+
+Ed_c1_comp_th_12[i] = Ed_c1_comp3[i] - Ed_c1_comp4[i]    # for theta_12
+
+Ed_comp5[i] = (1/n_samp)*sum(Ed_comp4[i,])    # for kappa 1st stage
+
+Ed_kappa1[i] = Ed_comp1[i] - Ed_comp5[i]    # for kappa 1st stage
+
+
+}
+# end of calculation for derivative w.r.t theta_11 and theta_12 and kappa 1st stage
+#####################################################################################
+
+
+
+# start of calculation for derivative w.r.t theta_21 and theta_22 and kappa 2nd stage
+
+# for theta_21
+
+Ed_c2_comp1 <- rep(0,226)
+Ed_c2_comp2 <- rep(0,226)
+Ed_c2_comp_th_21 <- rep(0,226)
+
+
+Ed_c2_comp21 <- array(0,dim=c(226,226,n_samp))
+Ed_c2_comp22 <- array(0,dim=c(226,226,n_samp))
+Ed_c2_comp23 <- matrix(0,226,n_samp)
+
+# for theta_22
+
+Ed_c2_comp3 <- rep(0,226)
+Ed_c2_comp4 <- rep(0,226)
+Ed_c2_comp_th_22 <- rep(0,226)
+
+
+Ed_c2_comp41 <- array(0,dim=c(226,226,n_samp))
+
+Ed_c2_comp43 <- matrix(0,226,n_samp)
+
+# for kappa 2nd stage
+
+Ed_comp6 <- rep(0,226)
+Ed_comp7 <- array(0,dim=c(226,226,n_samp))
+
+Ed_comp9 <- matrix(0,226,n_samp)
+Ed_comp10 <- rep(0,226)
+Ed_kappa2 <- rep(0,226) 
+
+
+for(i in 1:226)
+
+{
+
+# 2nd stage cure calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=2   # denotes the 2nd stage
+
+Ed_c2_comp1[i] <- delta_cure2[i]*deltastar_cure2[i]*(fev2[i])
+Ed_c2_comp3[i] <- delta_cure2[i]*deltastar_cure2[i]*(rx2[i])
+
+# 2nd stage d.w.r.t. kappa calculation   
+# these are done for each j, then we will add them up.
+
+Ed_comp6[i] <- delta_cure2[i]*deltastar_cure2[i]*((j-1)/a[7])
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:226)
+ {
+  Ed_c2_comp21[i,l,k] =  exp(a[3]*risk_lnl_c2[i,l,1] + a[4]*risk_lnl_c2[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c2_u[i,l,k]) )*risk_lnl_c2[i,l,1]   # for theta_21
+  Ed_c2_comp22[i,l,k] =  exp(a[3]*risk_lnl_c2[i,l,1] + a[4]*risk_lnl_c2[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c2_u[i,l,k]) )  # both foe theta_21, theta_22 and kappa 2nd stage
+
+  Ed_c2_comp41[i,l,k] =  exp(a[3]*risk_lnl_c2[i,l,1] + a[4]*risk_lnl_c2[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c2_u[i,l,k]) )*risk_lnl_c2[i,l,2]  # for theta_22
+
+  Ed_comp7[i,l,k] =  exp(a[3]*risk_lnl_c2[i,l,1] + a[4]*risk_lnl_c2[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c2_u[i,l,k]) )*((j-1)/a[7])  # for kappa 2nd stage
+ }
+
+Ed_c2_comp23[i,k] = delta_cure2[i]*deltastar_cure2[i]*(sum(Ed_c2_comp21[i,,k])/sum(Ed_c2_comp22[i,,k]))
+
+Ed_c2_comp43[i,k] = delta_cure2[i]*deltastar_cure2[i]*(sum(Ed_c2_comp41[i,,k])/sum(Ed_c2_comp22[i,,k]))
+
+Ed_comp9[i,k] = delta_cure2[i]*deltastar_cure2[i]*(sum(Ed_comp7[i,,k])/sum(Ed_c2_comp22[i,,k]))
+
+}
+
+Ed_c2_comp2[i] = (1/n_samp)*sum(Ed_c2_comp23[i,])
+
+Ed_c2_comp_th_21[i] = Ed_c2_comp1[i] - Ed_c2_comp2[i]
+
+Ed_c2_comp4[i] = (1/n_samp)*sum(Ed_c2_comp43[i,])
+
+Ed_c2_comp_th_22[i] = Ed_c2_comp3[i] - Ed_c2_comp4[i]
+
+Ed_comp10[i] = (1/n_samp)*sum(Ed_comp9[i,])
+
+Ed_kappa2[i] = Ed_comp6[i] - Ed_comp10[i]
+
+}
+# end of calculation for derivative w.r.t theta_21 and theta_22 and kappa 2nd stage
+#####################################################################################
+
+
+
+# start of calculation for derivative w.r.t theta_31 and theta_32
+
+# for theta_31
+
+Ed_c3_comp1 <- rep(0,69)
+Ed_c3_comp2 <- rep(0,69)
+Ed_c3_comp_th_31 <- rep(0,69)
+
+
+Ed_c3_comp21 <- array(0,dim=c(69,69,n_samp))
+Ed_c3_comp22 <- array(0,dim=c(69,69,n_samp))
+Ed_c3_comp23 <- matrix(0,69,n_samp)
+
+# for theta_32
+
+Ed_c3_comp3 <- rep(0,69)
+Ed_c3_comp4 <- rep(0,69)
+Ed_c3_comp_th_32 <- rep(0,69)
+
+
+Ed_c3_comp41 <- array(0,dim=c(69,69,n_samp))
+
+Ed_c3_comp43 <- matrix(0,69,n_samp)
+
+# for kappa 3rd stage
+
+Ed_comp11 <- rep(0,69)
+Ed_comp12 <- array(0,dim=c(69,69,n_samp))
+
+Ed_comp14 <- matrix(0,69,n_samp)
+Ed_comp15 <- rep(0,69)
+Ed_kappa3 <- rep(0,69)
+
+
+for(i in 1:69)
+
+{
+
+# 3rd stage cure calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=3   # denotes the 3nd stage
+
+Ed_c3_comp1[i] <- delta_cure3[i]*deltastar_cure3[i]*(fev3[i])  # for theta_31
+Ed_c3_comp3[i] <- delta_cure3[i]*deltastar_cure3[i]*(rx3[i])  # for theta_32
+
+Ed_comp11[i] <- delta_cure3[i]*deltastar_cure3[i]*((j-1)/a[7]) # for kappa 3rd stage
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:69)
+ {
+  Ed_c3_comp21[i,l,k] =  exp(a[5]*risk_lnl_c3[i,l,1] + a[6]*risk_lnl_c3[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c3_u[i,l,k]) )*risk_lnl_c3[i,l,1] # for theta_31
+  Ed_c3_comp22[i,l,k] =  exp(a[5]*risk_lnl_c3[i,l,1] + a[6]*risk_lnl_c3[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c3_u[i,l,k]) )  # both for theta_31, theta_32 and kappa 3rd stage
+
+  Ed_c3_comp41[i,l,k] =  exp(a[5]*risk_lnl_c3[i,l,1] + a[6]*risk_lnl_c3[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c3_u[i,l,k]) )*risk_lnl_c3[i,l,2]  # for theta_32
+
+  Ed_comp12[i,l,k] =  exp(a[5]*risk_lnl_c3[i,l,1] + a[6]*risk_lnl_c3[i,l,2] + (j-1)*log(a[7]) + log(risk_lnl_c3_u[i,l,k]) )*((j-1)/a[7]) # for kappa 3rd stage
+ 
+
+}
+
+Ed_c3_comp23[i,k] = delta_cure3[i]*deltastar_cure3[i]*(sum(Ed_c3_comp21[i,,k])/sum(Ed_c3_comp22[i,,k]))  # for theta_31
+
+Ed_c3_comp43[i,k] = delta_cure3[i]*deltastar_cure3[i]*(sum(Ed_c3_comp41[i,,k])/sum(Ed_c3_comp22[i,,k]))  # for theta_32
+
+Ed_comp14[i,k] = delta_cure3[i]*deltastar_cure3[i]*(sum(Ed_comp12[i,,k])/sum(Ed_c3_comp22[i,,k]))  # for kappa 3rd stage
+}
+
+Ed_c3_comp2[i] = (1/n_samp)*sum(Ed_c3_comp23[i,]) # for theta_31
+
+Ed_c3_comp_th_31[i] = Ed_c3_comp1[i] - Ed_c3_comp2[i] # for theta_31
+
+Ed_c3_comp4[i] = (1/n_samp)*sum(Ed_c3_comp43[i,]) # for theta_32
+
+Ed_c3_comp_th_32[i] = Ed_c3_comp3[i] - Ed_c3_comp4[i] # for theta_32
+
+Ed_comp15[i] = (1/n_samp)*sum(Ed_comp14[i,])  # for kappa 3rd stage
+
+Ed_kappa3[i] = Ed_comp11[i] - Ed_comp15[i]  # for kappa 3rd stage
+
+}
+# end of calculation for derivative w.r.t theta_31 and theta_32 and kappa 3rd stage
+#####################################################################################
+
+#sum(Ed_c1_comp_th_11) +  sum(Ed_c1_comp_th_12) + sum(Ed_c2_comp_th_21) + sum(Ed_c2_comp_th_22) + sum(Ed_c3_comp_th_31) + sum(Ed_c3_comp_th_32) + sum(Ed_kappa1) + sum(Ed_kappa2) + sum(Ed_kappa3)
+
+
+Eq1 = sum(Ed_c1_comp_th_11)
+
+Eq2 = sum(Ed_c1_comp_th_12)
+
+Eq3 = sum(Ed_c2_comp_th_21)
+
+Eq4 = sum(Ed_c2_comp_th_22)
+
+Eq5 = sum(Ed_c3_comp_th_31)
+
+Eq6 = sum(Ed_c3_comp_th_32)
+
+Eq7 = sum(Ed_kappa1) + sum(Ed_kappa2) + sum(Ed_kappa3)
+
+c(Eq1 = Eq1, Eq2 = Eq2, Eq3 = Eq3, Eq4 = Eq4, Eq5 = Eq5, Eq6 = Eq6, Eq7 = Eq7)
+}
+library(rootSolve)
+
+a<- c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3)
+
+ss1 <- multiroot(f = dl_theta_kappa_func, start = a)
+ss1
+#a<- c(1.0, 1.0, 0.3, 1.0, 1.0, 0.3, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5)
+
+# end of the dl_theta_kappa_func function
+
+#############################################################################
+#############################################################################
+#############################################################################
+#############################################################################
+
+
+
+
+dl_eta_rho_func<-function(b)
+{
+# start of calculation for derivative w.r.t eta_11 and eta_12
+
+# for eta_11
+
+Ed_i1_comp1 <- rep(0,247)
+Ed_i1_comp2 <- rep(0,247)
+Ed_i1_comp_et_11 <- rep(0,247)
+
+
+Ed_i1_comp21 <- array(0,dim=c(247,247,n_samp))
+Ed_i1_comp22 <- array(0,dim=c(247,247,n_samp))
+Ed_i1_comp23 <- matrix(0,247,n_samp)
+
+# for eta_12
+
+Ed_i1_comp3 <- rep(0,247)
+Ed_i1_comp4 <- rep(0,247)
+Ed_i1_comp_et_12 <- rep(0,247)
+
+
+Ed_i1_comp41 <- array(0,dim=c(247,247,n_samp))
+Ed_i1_comp43 <- matrix(0,247,n_samp)
+
+# for rho (this will include that part of diff w.r.t. rho, that would involve j=1)
+
+Ed_comp1_eta <- rep(0,247)
+Ed_comp2_eta <- array(0,dim=c(247,247,n_samp))
+
+Ed_comp4_eta <- matrix(0,247,n_samp)
+Ed_comp5_eta <- rep(0,247)
+Ed_rho1 <- rep(0,247)
+
+for(i in 1:247)
+
+{
+
+# 1st stage ill calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=1   # denotes the 1st stage
+
+Ed_i1_comp1[i] <- delta_ill1[i]*deltastar_ill1[i]*(fev_ill1[i]) # for diff w.r.t. eta_11
+Ed_i1_comp3[i] <- delta_ill1[i]*deltastar_ill1[i]*(rx_ill1[i]) # for diff w.r.t. eta_12
+
+Ed_comp1_eta[i] <- delta_ill1[i]*deltastar_ill1[i]*((j-1)/a[7]) #for diff w.r.t. rho, the 1st stage component
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:247)
+ {
+  Ed_i1_comp21[i,l,k] =  exp(b[1]*risk_lnl_i1[i,l,1] + b[2]*risk_lnl_i1[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i1_v[i,l,k]) )*risk_lnl_i1[i,l,1]  # for eta_11
+  Ed_i1_comp22[i,l,k] =  exp(b[1]*risk_lnl_i1[i,l,1] + b[2]*risk_lnl_i1[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i1_v[i,l,k]) ) # both for eta_11, eta_12 and rho first stage part
+
+  Ed_i1_comp41[i,l,k] =  exp(b[1]*risk_lnl_i1[i,l,1] + b[2]*risk_lnl_i1[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i1_v[i,l,k]) )*risk_lnl_i1[i,l,2] # for eta_12
+
+  Ed_comp2_eta[i,l,k] =  exp(b[1]*risk_lnl_i1[i,l,1] + b[2]*risk_lnl_i1[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i1_v[i,l,k]) )*((j-1)/a[7])  # for rho 1st stage
+ }
+
+Ed_i1_comp23[i,k] = delta_ill1[i]*deltastar_ill1[i]*(sum(Ed_i1_comp21[i,,k])/sum(Ed_i1_comp22[i,,k]))   # for eta_11
+
+Ed_i1_comp43[i,k] = delta_ill1[i]*deltastar_ill1[i]*(sum(Ed_i1_comp41[i,,k])/sum(Ed_i1_comp22[i,,k]))   # for eta_12
+
+Ed_comp4_eta[i,k] = delta_ill1[i]*deltastar_ill1[i]*(sum(Ed_comp2_eta[i,,k])/sum(Ed_i1_comp22[i,,k]))  # for rho
+
+}
+
+Ed_i1_comp2[i] = (1/n_samp)*sum(Ed_i1_comp23[i,])    # for eta_11
+
+Ed_i1_comp_et_11[i] = Ed_i1_comp1[i] - Ed_i1_comp2[i]    # for eta_11
+
+Ed_i1_comp4[i] = (1/n_samp)*sum(Ed_i1_comp43[i,])    # for eta_12
+
+Ed_i1_comp_et_12[i] = Ed_i1_comp3[i] - Ed_i1_comp4[i]    # for eta_12
+
+Ed_comp5_eta[i] = (1/n_samp)*sum(Ed_comp4_eta[i,])    # for rho 1st stage
+
+Ed_rho1[i] = Ed_comp1_eta[i] - Ed_comp5_eta[i]    # for rho 1st stage
+
+
+}
+# end of calculation for derivative w.r.t eta_11 and eta_12 and rho first stage
+#####################################################################################
+
+
+
+# start of calculation for derivative w.r.t eta_21 and eta_22 and rho 2nd stage
+
+# for eta_21
+
+Ed_i2_comp1 <- rep(0,81)
+Ed_i2_comp2 <- rep(0,81)
+Ed_i2_comp_et_21 <- rep(0,81)
+
+
+Ed_i2_comp21 <- array(0,dim=c(81,81,n_samp))
+Ed_i2_comp22 <- array(0,dim=c(81,81,n_samp))
+Ed_i2_comp23 <- matrix(0,81,n_samp)
+
+# for eta_22
+
+Ed_i2_comp3 <- rep(0,81)
+Ed_i2_comp4 <- rep(0,81)
+Ed_i2_comp_et_22 <- rep(0,81)
+
+
+Ed_i2_comp41 <- array(0,dim=c(81,81,n_samp))
+
+Ed_i2_comp43 <- matrix(0,81,n_samp)
+
+# for rho 2nd stage
+
+Ed_comp6_eta <- rep(0,81)
+Ed_comp7_eta <- array(0,dim=c(81,81,n_samp))
+
+Ed_comp9_eta <- matrix(0,81,n_samp)
+Ed_comp10_eta <- rep(0,81)
+Ed_rho2 <- rep(0,81) 
+
+
+for(i in 1:81)
+
+{
+
+# 2nd stage ill calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=2   # denotes the 2nd stage
+
+Ed_i2_comp1[i] <- delta_ill2[i]*deltastar_ill2[i]*(fev_ill2[i])
+Ed_i2_comp3[i] <- delta_ill2[i]*deltastar_ill2[i]*(rx_ill2[i])
+
+# 2nd stage d.w.r.t. rho calculation   
+# these are done for each j, then we will add them up.
+
+Ed_comp6_eta[i] <- delta_ill2[i]*deltastar_ill2[i]*((j-1)/a[7])
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:81)
+ {
+  Ed_i2_comp21[i,l,k] =  exp(b[3]*risk_lnl_i2[i,l,1] + b[4]*risk_lnl_i2[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i2_v[i,l,k]) )*risk_lnl_i2[i,l,1]   # for eta_21
+  Ed_i2_comp22[i,l,k] =  exp(b[3]*risk_lnl_i2[i,l,1] + b[4]*risk_lnl_i2[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i2_v[i,l,k]) )  # both for eta_21, eta_22 and rho 2nd stage
+
+  Ed_i2_comp41[i,l,k] =  exp(b[3]*risk_lnl_i2[i,l,1] + b[4]*risk_lnl_i2[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i2_v[i,l,k]) )*risk_lnl_i2[i,l,2]  # for eta_22
+
+  Ed_comp7_eta[i,l,k] =  exp(b[3]*risk_lnl_i2[i,l,1] + b[4]*risk_lnl_i2[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i2_v[i,l,k]) )*((j-1)/b[7])  # for rho 2nd stage
+ }
+
+Ed_i2_comp23[i,k] = delta_ill2[i]*deltastar_ill2[i]*(sum(Ed_i2_comp21[i,,k])/sum(Ed_i2_comp22[i,,k]))
+
+Ed_i2_comp43[i,k] = delta_ill2[i]*deltastar_ill2[i]*(sum(Ed_i2_comp41[i,,k])/sum(Ed_i2_comp22[i,,k]))
+
+Ed_comp9_eta[i,k] = delta_ill2[i]*deltastar_ill2[i]*(sum(Ed_comp7_eta[i,,k])/sum(Ed_i2_comp22[i,,k]))
+
+}
+
+Ed_i2_comp2[i] = (1/n_samp)*sum(Ed_i2_comp23[i,])
+
+Ed_i2_comp_et_21[i] = Ed_i2_comp1[i] - Ed_i2_comp2[i]
+
+Ed_i2_comp4[i] = (1/n_samp)*sum(Ed_i2_comp43[i,])
+
+Ed_i2_comp_et_22[i] = Ed_i2_comp3[i] - Ed_i2_comp4[i]
+
+Ed_comp10_eta[i] = (1/n_samp)*sum(Ed_comp9_eta[i,])
+
+Ed_rho2[i] = Ed_comp6_eta[i] - Ed_comp10_eta[i]
+
+}
+# end of calculation for derivative w.r.t eta_21 and eta_22
+#####################################################################################
+
+
+
+# start of calculation for derivative w.r.t eta_31 and eta_32
+
+# for eta_31
+
+Ed_i3_comp1 <- rep(0,27)
+Ed_i3_comp2 <- rep(0,27)
+Ed_i3_comp_et_31 <- rep(0,27)
+
+
+Ed_i3_comp21 <- array(0,dim=c(27,27,n_samp))
+Ed_i3_comp22 <- array(0,dim=c(27,27,n_samp))
+Ed_i3_comp23 <- matrix(0,27,n_samp)
+
+# for eta_32
+
+Ed_i3_comp3 <- rep(0,27)
+Ed_i3_comp4 <- rep(0,27)
+Ed_i3_comp_et_32 <- rep(0,27)
+
+
+Ed_i3_comp41 <- array(0,dim=c(27,27,n_samp))
+
+Ed_i3_comp43 <- matrix(0,27,n_samp)
+
+# for rho 3rd stage
+
+Ed_comp11_eta <- rep(0,27)
+Ed_comp12_eta <- array(0,dim=c(27,27,n_samp))
+
+Ed_comp14_eta <- matrix(0,27,n_samp)
+Ed_comp15_eta <- rep(0,27)
+Ed_rho3 <- rep(0,27)
+
+
+for(i in 1:27)
+
+{
+
+# 3rd stage ill calculation. this includes only those parts 
+# that are dependent of j. the expressions are in the blue copy.
+
+j=3   # denotes the 3nd stage
+
+Ed_i3_comp1[i] <- delta_ill3[i]*deltastar_ill3[i]*(fev_ill3[i])  # for eta_31
+Ed_i3_comp3[i] <- delta_ill3[i]*deltastar_ill3[i]*(rx_ill3[i])  # for eta_32
+
+Ed_comp11_eta[i] <- delta_ill3[i]*deltastar_ill3[i]*((j-1)/a[7]) # for rho 3rd stage
+
+for(k in 1: n_samp)
+ {
+
+ for(l in 1:27)
+ {
+  Ed_i3_comp21[i,l,k] =  exp(b[5]*risk_lnl_i3[i,l,1] + b[6]*risk_lnl_i3[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i3_v[i,l,k]) )*risk_lnl_i3[i,l,1] # for eta_31
+  Ed_i3_comp22[i,l,k] =  exp(b[5]*risk_lnl_i3[i,l,1] + b[6]*risk_lnl_i3[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i3_v[i,l,k]) )  # both for eta_31, eta_32 and rho 3rd stage
+
+  Ed_i3_comp41[i,l,k] =  exp(b[5]*risk_lnl_i3[i,l,1] + b[6]*risk_lnl_i3[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i3_v[i,l,k]) )*risk_lnl_i3[i,l,2]  # for eta_32
+
+  Ed_comp12_eta[i,l,k] =  exp(b[5]*risk_lnl_i3[i,l,1] + b[6]*risk_lnl_i3[i,l,2] + (j-1)*log(b[7]) + log(risk_lnl_i3_v[i,l,k]) )*((j-1)/b[7]) # for rho 3rd stage
+ 
+
+}
+
+Ed_i3_comp23[i,k] = delta_ill3[i]*deltastar_ill3[i]*(sum(Ed_i3_comp21[i,,k])/sum(Ed_i3_comp22[i,,k]))  # for eta_31
+
+Ed_i3_comp43[i,k] = delta_ill3[i]*deltastar_ill3[i]*(sum(Ed_i3_comp41[i,,k])/sum(Ed_i3_comp22[i,,k]))  # for eta_32
+
+Ed_comp14_eta[i,k] = delta_ill3[i]*deltastar_ill3[i]*(sum(Ed_comp12_eta[i,,k])/sum(Ed_i3_comp22[i,,k]))  # for rho 3rd stage
+}
+
+Ed_i3_comp2[i] = (1/n_samp)*sum(Ed_i3_comp23[i,]) # for eta_31
+
+Ed_i3_comp_et_31[i] = Ed_i3_comp1[i] - Ed_i3_comp2[i] # for eta_31
+
+Ed_i3_comp4[i] = (1/n_samp)*sum(Ed_i3_comp43[i,]) # for eta_32
+
+Ed_i3_comp_et_32[i] = Ed_i3_comp3[i] - Ed_i3_comp4[i] # for eta_32
+
+Ed_comp15_eta[i] = (1/n_samp)*sum(Ed_comp14_eta[i,])  # for rho 3rd stage
+
+Ed_rho3[i] = Ed_comp11_eta[i] - Ed_comp15_eta[i]  # for rho 3rd stage
+
+}
+# end of calculation for derivative w.r.t eta_31 and eta_32 and rho 3rd stage
+#####################################################################################
+
+#sum(Ed_c1_comp_th_11) +  sum(Ed_c1_comp_th_12) + sum(Ed_c2_comp_th_21) + sum(Ed_c2_comp_th_22) + sum(Ed_c3_comp_th_31) + sum(Ed_c3_comp_th_32) + sum(Ed_kappa1) + sum(Ed_kappa2) + sum(Ed_kappa3) + sum(Ed_i1_comp_et_11) +  sum(Ed_i1_comp_et_12) + sum(Ed_i2_comp_et_21) + sum(Ed_i2_comp_et_22) + sum(Ed_i3_comp_et_31) + sum(Ed_i3_comp_et_32) + sum(Ed_rho1) + sum(Ed_rho2) + sum(Ed_rho3)
+
+Eq8 = sum(Ed_i1_comp_et_11)
+
+Eq9 = sum(Ed_i1_comp_et_12)
+
+Eq10 = sum(Ed_i2_comp_et_21)
+
+Eq11 = sum(Ed_i2_comp_et_22)
+
+Eq12 = sum(Ed_i3_comp_et_31)
+
+Eq13 = sum(Ed_i3_comp_et_32)
+
+Eq14 = sum(Ed_rho1) + sum(Ed_rho2) + sum(Ed_rho3)
+
+c(Eq8 = Eq8, Eq9 = Eq9, Eq10 = Eq10, Eq11 = Eq11, Eq12 = Eq12, Eq13 = Eq13, Eq14 = Eq14)
+}
+library(rootSolve)
+b<- c(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.3)
+ss2 <- multiroot(f = dl_eta_rho_func, start = b)
+ss2
+
+
+#a<- c(1.0, 1.0, 0.3, 1.0, 1.0, 0.3, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.5, 0.5, 0.5, 0.5, 0.5)
+
+# end of the dl_eta_rho_func function
+#############################################################################
+#############################################################################
+#############################################################################
+#############################################################################
+
+
+# now the third function, that involves the bivariate weibull parameters.
+# that is alpha1, alpha2, beta1, beta2 and xi
+
+dl_a_b_xi_func <- function(d)
+{
+
+# diff w.r.t alpha1 
+
+Ed_a1_comp11 <- matrix(0,647,n_samp)
+Ed_a1_comp1 <- rep(0,647)
+
+Ed_a1_comp21 <- matrix(0,647,n_samp)
+Ed_a1_comp2 <- rep(0,647)
+
+Ed_a1_comp31 <- matrix(0,647,n_samp)
+Ed_a1_comp3 <- rep(0,647)
+
+Ed_a1 <- rep(0,647)
+
+# diff w.r.t alpha2 
+
+Ed_a2_comp11 <- matrix(0,647,n_samp)
+Ed_a2_comp1 <- rep(0,647)
+
+Ed_a2_comp21 <- matrix(0,647,n_samp)
+Ed_a2_comp2 <- rep(0,647)
+
+Ed_a2_comp31 <- matrix(0,647,n_samp)
+Ed_a2_comp3 <- rep(0,647)
+
+Ed_a2 <- rep(0,647)
+
+# diff w.r.t. beta1
+
+Ed_b1_comp11 <- matrix(0,647,n_samp)
+Ed_b1_comp1 <- rep(0,647)
+
+Ed_b1_comp21 <- matrix(0,647,n_samp)
+Ed_b1_comp2 <- rep(0,647)
+
+Ed_b1_comp31 <- matrix(0,647,n_samp)
+Ed_b1_comp3 <- rep(0,647)
+
+Ed_b1_comp41 <- matrix(0,647,n_samp)
+Ed_b1_comp4 <- rep(0,647)
+
+Ed_b1 <- rep(0,647)
+
+# diff w.r.t. beta2
+
+Ed_b2_comp11 <- matrix(0,647,n_samp)
+Ed_b2_comp1 <- rep(0,647)
+
+Ed_b2_comp21 <- matrix(0,647,n_samp)
+Ed_b2_comp2 <- rep(0,647)
+
+Ed_b2_comp31 <- matrix(0,647,n_samp)
+Ed_b2_comp3 <- rep(0,647)
+
+Ed_b2_comp41 <- matrix(0,647,n_samp)
+Ed_b2_comp4 <- rep(0,647)
+
+Ed_b2 <- rep(0,647)
+
+# diff w.r.t. xi
+
+Ed_xi_comp11 <- matrix(0,647,n_samp)
+Ed_xi_comp1 <- rep(0,647)
+
+Ed_xi_comp21 <- matrix(0,647,n_samp)
+Ed_xi_comp2 <- rep(0,647)
+
+Ed_xi_comp31 <- matrix(0,647,n_samp)
+Ed_xi_comp3 <- rep(0,647)
+
+Ed_xi <- rep(0,647)
+
+for(i in 1:647)
+
+{
+for(k in 1: n_samp)
+{
+
+# diff w.r.t alpha1 components
+
+Ed_a1_comp11[i,k] = ( exp(-( d[1]*(samp_u[i,k])^d[2] ))*(samp_u[i,k])^d[2] )/(1-exp(-( d[1]*(samp_u[i,k])^d[2] )))
+
+Ed_a1_comp21[i,k] = (samp_u[i,k])^d[2] 
+
+Ed_a1_comp31[i,k] = ((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5]-1)*exp(-( d[1]*(samp_u[i,k])^d[2] ))*(samp_u[i,k])^d[2])/((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])+(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])-1)
+
+# diff w.r.t alpha2 components
+
+Ed_a2_comp11[i,k] = ( exp(-( d[3]*(samp_v[i,k])^d[4] ))*(samp_v[i,k])^d[4] )/(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))
+
+Ed_a2_comp21[i,k] = (samp_v[i,k])^d[4] 
+
+Ed_a2_comp31[i,k] = ((1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5]-1)*exp(-( d[3]*(samp_v[i,k])^d[4] ))*(samp_v[i,k])^d[4])/((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])+(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])-1)
+
+# diff w.r.t beta1 components
+
+Ed_b1_comp11[i,k] = ((exp(-( d[1]*(samp_u[i,k])^d[2] )))*d[1]*(samp_u[i,k])^d[2]*log(samp_u[i,k]))/(1-exp(-( d[1]*(samp_u[i,k])^d[2] )))
+
+Ed_b1_comp21[i,k] = log(samp_u[i,k])
+
+Ed_b1_comp31[i,k] = ((samp_u[i,k])^d[2])*log(samp_u[i,k])
+
+Ed_b1_comp41[i,k] = ((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5]-1)*exp(-( d[1]*(samp_u[i,k])^d[2] ))*d[1]*(samp_u[i,k])^d[2]*log(samp_u[i,k]))/((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])+(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])-1)
+
+# diff w.r.t beta2 components
+
+Ed_b2_comp11[i,k] = ((exp(-( d[3]*(samp_v[i,k])^d[4] )))*d[3]*(samp_v[i,k])^d[4]*log(samp_v[i,k]))/(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))
+
+Ed_b2_comp21[i,k] = log(samp_v[i,k])
+
+Ed_b2_comp31[i,k] = ((samp_v[i,k])^d[4])*log(samp_v[i,k])
+
+Ed_b2_comp41[i,k] = ((1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5]-1)*exp(-( d[3]*(samp_v[i,k])^d[4] ))*d[3]*(samp_v[i,k])^d[4]*log(samp_v[i,k]))/((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])+(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])-1)
+
+# diff w.r.t xi components
+
+Ed_xi_comp11[i,k] = log(1-exp(-( d[1]*(samp_u[i,k])^d[2] )))
+
+Ed_xi_comp21[i,k] = log(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))
+
+Ed_xi_comp31[i,k] = ( (1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])*log( 1-exp(-( d[1]*(samp_u[i,k])^d[2] ))) + (1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])*log( 1-exp(-( d[3]*(samp_v[i,k])^d[4] )) ) )/((1-exp(-( d[1]*(samp_u[i,k])^d[2] )))^(-d[5])+(1-exp(-( d[3]*(samp_v[i,k])^d[4] )))^(-d[5])-1)
+
+}
+
+# diff w.r.t alpha1 components
+
+Ed_a1_comp1[i] = -(1/n_samp)*(d[5]+1)*sum(Ed_a1_comp11[i,])
+
+Ed_a1_comp2[i] = -(1/n_samp)*sum(Ed_a1_comp21[i,])
+
+Ed_a1_comp3[i] = (1/n_samp)*(1+2*d[5])*sum(Ed_a1_comp31[i,])
+
+Ed_a1[i] = Ed_a1_comp1[i] + Ed_a1_comp2[i] + Ed_a1_comp3[i] + (1/d[1])
+
+# diff w.r.t alpha2 components
+
+Ed_a2_comp1[i] = -(1/n_samp)*(d[5]+1)*sum(Ed_a2_comp11[i,])
+
+Ed_a2_comp2[i] = -(1/n_samp)*sum(Ed_a2_comp21[i,])
+
+Ed_a2_comp3[i] = (1/n_samp)*(1+2*d[5])*sum(Ed_a2_comp31[i,])
+
+Ed_a2[i] = Ed_a2_comp1[i] + Ed_a2_comp2[i] + Ed_a2_comp3[i] + (1/d[3])
+
+# diff w.r.t beta1 components
+
+Ed_b1_comp1[i] = -(1/n_samp)*(d[5]+1)*sum(Ed_b1_comp11[i,])
+
+Ed_b1_comp2[i] = (1/n_samp)*sum(Ed_b1_comp21[i,])
+ 
+Ed_b1_comp3[i] = -(1/n_samp)*d[1]*sum(Ed_b1_comp31[i,])
+
+Ed_b1_comp4[i] = (1/n_samp)*(1+2*d[5])*sum(Ed_b1_comp31[i,])
+
+Ed_b1[i] = Ed_b1_comp1[i] + Ed_b1_comp2[i] + Ed_b1_comp3[i] + Ed_b1_comp4[i] + (1/d[2])
+
+# diff w.r.t beta2 components
+
+Ed_b2_comp1[i] = -(1/n_samp)*(d[5]+1)*sum(Ed_b2_comp11[i,])
+
+Ed_b2_comp2[i] = (1/n_samp)*sum(Ed_b2_comp21[i,])
+ 
+Ed_b2_comp3[i] = -(1/n_samp)*d[3]*sum(Ed_b2_comp31[i,])
+
+Ed_b2_comp4[i] = (1/n_samp)*(1+2*d[5])*sum(Ed_b2_comp31[i,])
+
+Ed_b2[i] = Ed_b2_comp1[i] + Ed_b2_comp2[i] + Ed_b2_comp3[i] + Ed_b2_comp4[i] + (1/d[4])
+
+# diff w.r.t. xi
+
+Ed_xi_comp1[i] = -(1/n_samp)*sum(Ed_xi_comp11[i,])
+
+Ed_xi_comp2[i] = -(1/n_samp)*sum(Ed_xi_comp21[i,])
+
+Ed_xi_comp3[i] = (1/n_samp)*(2+(1/d[5]))*sum(Ed_xi_comp31[i,])
+
+Ed_xi[i] = Ed_xi_comp1[i] + Ed_xi_comp2[i] + Ed_xi_comp3[i] +(1/(1+d[5]))
+
+}
+
+Eq15 = sum(Ed_a1)
+
+Eq16 = sum(Ed_a2)
+
+Eq17 = sum(Ed_b1)
+
+Eq18 = sum(Ed_b2)
+
+Eq19 = sum(Ed_xi)
+
+c(Eq15 = Eq15, Eq16 =Eq16, Eq17 =Eq17, Eq18 =Eq18, Eq19 =Eq19 )
+
+}  # end of the dl_a_b_xi function
+
+library(rootSolve)
+
+d<- c(.5, .5, 0.5, 0.5, 0.3)
+
+ss3 <- multiroot(f = dl_a_b_xi_func, start = d)
+ss3
+

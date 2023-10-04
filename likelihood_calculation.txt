@@ -1,0 +1,499 @@
+
+
+z<-read.table("data.txt",header=TRUE,sep='\t')	
+
+time_emp1 <- z$emp1
+time_emp2 <- z$emp2
+time_emp3 <- z$emp3
+
+
+time_unemp1 <- z$unemp1
+time_unemp2 <- z$unemp2
+time_unemp3 <- z$unemp3
+
+indi_batsman <- z$cov
+###################################################
+
+z1<-read.table("delta.txt",header=TRUE,sep='\t')	
+
+delta_emp1 <- z1$emp1
+delta_emp2 <- z1$emp2
+delta_emp3 <- z1$emp3
+
+delta_unemp1 <- z1$unemp1
+delta_unemp2 <- z1$unemp2
+delta_unemp3 <- z1$unemp3
+###################################################
+
+z2<-read.table("deltastar.txt",header=TRUE,sep='\t')	
+
+deltastar_emp1 <- z2$emp1
+deltastar_emp2 <- z2$emp2
+deltastar_emp3 <- z2$emp3
+
+deltastar_unemp1 <- z2$unemp1
+deltastar_unemp2 <- z2$unemp2
+deltastar_unemp3 <- z2$unemp3
+###################################################
+
+# initialization
+#############################
+
+# emp stage 1
+
+emp1_risk <- array(0,dim=c(30,30,2))
+
+p2_emp1_comp1 <- rep(0,30)
+
+p2_emp1_comp21 <- matrix(0,30,30)
+
+p2_emp1_comp22 <- rep(0,30)
+
+p2_emp1_comp2 <- rep(0,30)
+
+
+# emp stage 2
+
+emp2_risk <- array(0,dim=c(30,30,2))
+
+p2_emp2_comp21 <- matrix(0,30,30)
+
+p2_emp2_comp1 <- rep(0,30)
+
+p2_emp2_comp22 <- rep(0,30)
+
+p2_emp2_comp2 <- rep(0,30)
+
+
+# emp stage 3
+
+emp3_risk <- array(0,dim=c(30,30,2))
+
+p2_emp3_comp1 <- rep(0,30)
+
+
+p2_emp3_comp21 <- matrix(0,30,30)
+
+p2_emp3_comp22 <- rep(0,30)
+
+p2_emp3_comp2 <- rep(0,30)
+
+########################################################################
+
+# unemp stage 1
+
+unemp1_risk <- array(0,dim=c(30,30,2))
+
+p2_unemp1_comp21 <- matrix(0,30,30)
+
+p2_unemp1_comp1 <- rep(0,30)
+
+p2_unemp1_comp22 <- rep(0,30)
+
+p2_unemp1_comp2 <- rep(0,30)
+
+# unemp stage 2
+
+unemp2_risk <- array(0,dim=c(30,30,2))
+
+p2_unemp2_comp21 <- matrix(0,30,30)
+
+p2_unemp2_comp1 <- rep(0,30)
+
+p2_unemp2_comp22 <- rep(0,30)
+
+p2_unemp2_comp2 <- rep(0,30)
+
+# unemp stage 3
+
+unemp3_risk <- array(0,dim=c(29,29,2))
+
+p2_unemp3_comp21 <- matrix(0,29,29)
+
+p2_unemp3_comp1 <- rep(0,30)
+
+p2_unemp3_comp22 <- rep(0,29)
+
+p2_unemp3_comp2 <- rep(0,29)
+
+p2 <- rep(0,30)
+
+# the copula dependent part
+
+p2_comp31 <- 0
+
+p2_comp32 <- 0
+
+p2_comp33 <- 0
+
+p2_comp3 <- 0
+
+########################################################################
+
+
+
+# the initial starting values which are kept to be fixed.
+
+
+
+
+beta_1=1.9
+alpha_1=(gamma(1+(1/beta_1)))^beta_1 # to make the variance 1
+alpha_1
+
+a_1<-beta_1
+a_1
+
+b_1<-(1/((alpha_1)^(1/beta_1)))
+b_1
+
+rweibull(30,shape=a_1,scale=b_1)
+
+# changed shape=a 
+# changed scale=b
+
+u <- rweibull(30,alpha_1,beta_1)
+
+
+beta_2=1.5
+alpha_2=(gamma(1+(1/beta_2)))^beta_2
+alpha_2
+
+
+a_2<-beta_2
+a_2
+
+b_2<-(1/((alpha_2)^(1/beta_2)))
+b_2
+
+v <- rweibull(30,shape=a_2,scale=b_2)
+
+# to calculate the initial values of thetas
+library(survival)
+coxph(Surv(time_emp1, delta_emp1) ~ indi_batsman )
+
+theta_1 <- -0.410
+
+coxph(Surv(time_emp2, delta_emp2) ~ indi_batsman )
+
+theta_2 <- -0.325
+
+coxph(Surv(time_emp3, delta_emp3) ~ indi_batsman )
+
+theta_3 <- -1.046
+
+# to calculate the initial values of the etas
+
+coxph(Surv(time_unemp1, delta_unemp1) ~ indi_batsman )
+eta_1 <- -0.503
+
+coxph(Surv(time_unemp2, delta_unemp2) ~ indi_batsman )
+eta_2 <- 0.132
+
+coxph(Surv(time_unemp3, delta_unemp3) ~ indi_batsman )
+eta_3 <- 0.470
+
+kappa = 0.5
+rho = 0.7
+zi = 0.03
+
+# for the ith individual
+
+i=1
+
+# start of the log likelihood function
+
+func_uv <- function(b)
+{
+##########################################
+#          for employment stage 1        #
+##########################################
+
+
+j=1
+p2_emp1_comp1[i] <- delta_emp1[i] * deltastar_emp1[i] * log(b[1])
+
+
+for(l in 1:30)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_emp1[l]>=time_emp1[i] && time_emp1[i]!=0)
+{
+emp1_risk[i,l,1] <- indi_batsman[l] 
+emp1_risk[i,l,2] <- u[l]
+}
+
+else
+{
+emp1_risk[i,l,1] <- 0
+emp1_risk[i,l,2] <- 0
+}
+
+p2_emp1_comp21[i,l] =  ( exp(theta_1*emp1_risk[i,l,1] + (j-1)*log(kappa) + log(emp1_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_emp1_comp22[i] = sum(p2_emp1_comp21[i,]) - ( exp(theta_1*emp1_risk[i,i,1] + (j-1)*log(kappa) + log(emp1_risk[i,i,2]) ) ) + ( exp(theta_1*emp1_risk[i,i,1] + (j-1)*log(kappa) + log(b[1]) ) )
+
+p2_emp1_comp2[i] = delta_emp1[i] * deltastar_emp1[i] * log(p2_emp1_comp22[i])
+
+
+##################  End Of Employment stage 1 #############################
+
+
+
+##########################################
+#          for employment stage 2        #
+##########################################
+
+
+j=2
+p2_emp2_comp1[i] <- delta_emp2[i] * deltastar_emp2[i] * log(b[1])
+
+
+for(l in 1:30)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_emp2[l]>=time_emp2[i] && time_emp2[i]!=0)
+{
+emp2_risk[i,l,1] <- indi_batsman[l] 
+emp2_risk[i,l,2] <- u[l]
+}
+
+else
+{
+emp2_risk[i,l,1] <- 0
+emp2_risk[i,l,2] <- 0
+}
+
+p2_emp2_comp21[i,l] =  ( exp(theta_2*emp2_risk[i,l,1] + (j-1)*log(kappa) + log(emp2_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_emp2_comp22[i] = sum(p2_emp2_comp21[i,]) - ( exp(theta_2*emp2_risk[i,i,1] + (j-1)*log(kappa) + log(emp2_risk[i,i,2]) ) ) + ( exp(theta_2*emp2_risk[i,i,1] + (j-1)*log(kappa) + log(b[1]) ) )
+
+p2_emp2_comp2[i] = delta_emp2[i] * deltastar_emp2[i] * log(p2_emp2_comp22[i])
+
+
+##################  End Of Employment stage 2 #############################
+
+
+
+##########################################
+#          for employment stage 3        #
+##########################################
+
+
+j=3
+p2_emp3_comp1[i] <- delta_emp3[i] * deltastar_emp3[i] * log(b[1])
+
+
+for(l in 1:30)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_emp3[l]>=time_emp3[i] && time_emp3[i]!=0)
+{
+emp3_risk[i,l,1] <- indi_batsman[l] 
+emp3_risk[i,l,2] <- u[l]
+}
+
+else
+{
+emp3_risk[i,l,1] <- 0
+emp3_risk[i,l,2] <- 0
+}
+
+p2_emp3_comp21[i,l] =  ( exp(theta_3*emp3_risk[i,l,1] + (j-1)*log(kappa) + log(emp3_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_emp3_comp22[i] = sum(p2_emp3_comp21[i,]) - ( exp(theta_3*emp3_risk[i,i,1] + (j-1)*log(kappa) + log(emp3_risk[i,i,2]) ) ) + ( exp(theta_3*emp3_risk[i,i,1] + (j-1)*log(kappa) + log(b[1]) ) )
+
+p2_emp3_comp2[i] = delta_emp3[i] * deltastar_emp3[i] * log(p2_emp3_comp22[i])
+
+
+##################  End Of Employment stage 3 #############################
+
+
+
+
+##########################################
+#          for Unemployment stage 1        #
+##########################################
+
+
+j=1
+p2_unemp1_comp1[i] <- delta_unemp1[i] * deltastar_unemp1[i] * log(b[2])
+
+
+for(l in 1:30)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_unemp1[l]>=time_unemp1[i] && time_unemp1[i]!=0)
+{
+unemp1_risk[i,l,1] <- indi_batsman[l] 
+unemp1_risk[i,l,2] <- v[l]
+}
+
+else
+{
+unemp1_risk[i,l,1] <- 0
+unemp1_risk[i,l,2] <- 0
+}
+
+p2_unemp1_comp21[i,l] =  ( exp(eta_1*unemp1_risk[i,l,1] + (j-1)*log(rho) + log(unemp1_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_unemp1_comp22[i] = sum(p2_unemp1_comp21[i,]) - ( exp(eta_1*unemp1_risk[i,i,1] + (j-1)*log(rho) + log(unemp1_risk[i,i,2]) ) ) + ( exp(eta_1*unemp1_risk[i,i,1] + (j-1)*log(rho) + log(b[2]) ) )
+
+p2_unemp1_comp2[i] = delta_unemp1[i] * deltastar_unemp1[i] * log(p2_unemp1_comp22[i])
+
+
+##################  End Of UnEmployment stage 1 #############################
+
+
+
+##########################################
+#          for Unemployment stage 2        #
+##########################################
+
+
+j=2
+p2_unemp2_comp1[i] <- delta_unemp2[i] * deltastar_unemp2[i] * log(b[2])
+
+
+for(l in 1:30)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_unemp2[l]>=time_unemp2[i] && time_unemp2[i]!=0)
+{
+unemp2_risk[i,l,1] <- indi_batsman[l] 
+unemp2_risk[i,l,2] <- v[l]
+}
+
+else
+{
+unemp2_risk[i,l,1] <- 0
+unemp2_risk[i,l,2] <- 0
+}
+
+p2_unemp2_comp21[i,l] =  ( exp(eta_2*unemp2_risk[i,l,1] + (j-1)*log(rho) + log(unemp2_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_unemp2_comp22[i] = sum(p2_unemp2_comp21[i,]) - ( exp(eta_2*unemp2_risk[i,i,1] + (j-1)*log(rho) + log(unemp2_risk[i,i,2]) ) ) + ( exp(eta_2*unemp2_risk[i,i,1] + (j-1)*log(kappa) + log(b[2]) ) )
+
+p2_unemp2_comp2[i] = delta_unemp2[i] * deltastar_unemp2[i] * log(p2_unemp2_comp22[i])
+
+
+##################  End Of UnEmployment stage 2 #############################
+
+
+
+##########################################
+#          for Unemployment stage 3        #
+##########################################
+
+
+j=3
+p2_unemp3_comp1[i] <- delta_unemp3[i] * deltastar_unemp3[i] * log(b[2])
+
+
+for(l in 1:29)
+{
+
+# The risk calculation
+#l's are denoting the individuals who are there in the risk set.
+
+if(time_unemp3[l]>=time_unemp3[i] && time_unemp3[i]!=0)
+{
+unemp3_risk[i,l,1] <- indi_batsman[l] 
+unemp3_risk[i,l,2] <- v[l]
+}
+
+else
+{
+unemp3_risk[i,l,1] <- 0
+unemp3_risk[i,l,2] <- 0
+}
+
+p2_unemp3_comp21[i,l] =  ( exp(eta_3*unemp3_risk[i,l,1] + (j-1)*log(rho) + log(unemp3_risk[i,l,2]) ) )
+
+}
+
+# now there is a correction. Since the ith individual is also in the risk set at the time point
+# so, need to treat it's u value as unknown. But since it is also included 
+# so, subtract it and add it with the unknown u's.
+
+p2_unemp3_comp22[i] = sum(p2_unemp3_comp21[i,]) - ( exp(eta_3*unemp3_risk[i,i,1] + (j-1)*log(rho) + log(unemp3_risk[i,i,2]) ) ) + ( exp(eta_3*unemp3_risk[i,i,1] + (j-1)*log(rho) + log(b[2]) ) )
+
+p2_unemp3_comp2[i] = delta_unemp3[i] * deltastar_unemp3[i] * log(p2_unemp3_comp22[i])
+
+
+##################  End Of UnEmployment stage 3 #############################
+# end of the data part 
+# start of the copula part
+
+p2_comp31 <- (zi + 1)*log(1-exp(-alpha_1*(b[1]^beta_1))) + (zi + 1)*log(1-exp(-alpha_2*(b[2]^beta_2)))
+
+p2_comp32 <- (beta_1 - 1)*log(b[1]) + (beta_2 - 1)*log(b[2])
+
+p2_comp33 <- alpha_1*(b[1]^beta_1) + alpha_2*(b[2]^beta_2)
+
+p2_comp34 <- ((1/zi)+2)*log(((1-exp(-alpha_1*(b[1]^beta_1))))^(-zi) + (1-exp(-alpha_2*(b[2]^beta_2)))^(-zi) -1)
+
+
+p2_comp3 <- - p2_comp31 + p2_comp32 - p2_comp33 - p2_comp34
+
+p2[i] = p2_emp1_comp1[i] + p2_emp1_comp2[i] + p2_emp2_comp1[i] + p2_emp2_comp2[i] + p2_emp3_comp1[i] + p2_emp3_comp2[i] + p2_unemp1_comp1[i] + p2_unemp1_comp2[i] + p2_unemp2_comp1[i] + p2_unemp2_comp2[i] + p2_unemp3_comp1[i] + p2_unemp3_comp2[i] + p2_comp3 
+
+return(sum(p2[i]))
+}
+
+# initial root of b
+b <- c(u[1],v[1])
+
+library(maxLik)
+
+t1<-Sys.time()
+mle <- maxLik(logLik =func_uv, start =c(b))
+mle
+t2<-Sys.time()
+
+
